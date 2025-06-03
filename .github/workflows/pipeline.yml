@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-      - run: mvn -f pom.xml clean test
+      - run: mvn -f pom.xml clean compile test
   release:
     runs-on: ubuntu-latest
     needs: test
