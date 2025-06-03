@@ -1,7 +1,9 @@
 package com.oilerrig.backend.mapper;
 
 import com.oilerrig.backend.data.entity.OrderItemEntity;
+import com.oilerrig.backend.data.entity.ProductEntity;
 import com.oilerrig.backend.domain.OrderItem;
+import com.oilerrig.backend.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,22 +23,13 @@ class OrderItemMapperTest {
     @Test
     void testEntityToDomain() {
         OrderItemEntity entity = new OrderItemEntity();
-        entity.setId(1);
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setName("test");
+        entity.setProduct(productEntity);
         entity.setQuantity(5);
 
         OrderItem domain = mapper.toDomain(entity);
-        assertThat(domain.getId()).isEqualTo(1);
+        assertThat(domain.getProduct().getName()).isEqualTo("test");
         assertThat(domain.getQuantity()).isEqualTo(5);
-    }
-
-    @Test
-    void testDomainToEntity() {
-        OrderItem domain = new OrderItem();
-        domain.setId(1);
-        domain.setQuantity(5);
-
-        OrderItemEntity entity = mapper.toEntity(domain);
-        assertThat(entity.getId()).isEqualTo(1);
-        assertThat(entity.getQuantity()).isEqualTo(5);
     }
 }

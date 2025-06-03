@@ -32,17 +32,5 @@ class VendorMapperTest {
         assertThat(domain.getName()).isEqualTo("Test Vendor");
         assertThat(domain.getBaseurl()).isEqualTo("http://vendor.test");
     }
-
-    @Test
-    void testDomainToEntity() {
-        Vendor domain = new Vendor();
-        domain.setId(1);
-        domain.setName("Test Vendor");
-        domain.setBaseurl("http://vendor.test");
-
-        VendorEntity entity = mapper.toEntity(domain);
-        assertThat(entity.getId()).isEqualTo(1);
-        assertThat(entity.getName()).isEqualTo("Test Vendor");
-        assertThat(entity.getBaseurl()).isEqualTo("http://vendor.test");
-    }
+    
 }

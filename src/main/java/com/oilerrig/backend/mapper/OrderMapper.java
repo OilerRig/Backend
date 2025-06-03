@@ -7,10 +7,6 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
-
     @Mapping(source = "status", target = "status")
     Order toDomain(OrderEntity entity);
-
-    @Mapping(source = "status", target = "status")
-    OrderEntity toEntity(Order domain);
 }

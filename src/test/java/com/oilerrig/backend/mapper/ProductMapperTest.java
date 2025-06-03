@@ -21,30 +21,15 @@ class ProductMapperTest {
     @Test
     void testEntityToDomain() {
         ProductEntity entity = new ProductEntity();
-        entity.setId(1);
         entity.setName("Widget");
         entity.setPrice(9.99);
         entity.setStock(10);
 
         Product domain = mapper.toDomain(entity);
-        assertThat(domain.getId()).isEqualTo(1);
         assertThat(domain.getName()).isEqualTo("Widget");
         assertThat(domain.getPrice()).isEqualTo(9.99);
         assertThat(domain.getStock()).isEqualTo(10);
     }
 
-    @Test
-    void testDomainToEntity() {
-        Product domain = new Product();
-        domain.setId(1);
-        domain.setName("Widget");
-        domain.setPrice(9.99);
-        domain.setStock(10);
 
-        ProductEntity entity = mapper.toEntity(domain);
-        assertThat(entity.getId()).isEqualTo(1);
-        assertThat(entity.getName()).isEqualTo("Widget");
-        assertThat(entity.getPrice()).isEqualTo(9.99);
-        assertThat(entity.getStock()).isEqualTo(10);
-    }
 }

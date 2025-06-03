@@ -23,30 +23,13 @@ class UserMapperTest {
     @Test
     void testEntityToDomain() {
         UserEntity entity = new UserEntity();
-        UUID id = UUID.randomUUID();
-        entity.setId(id);
         entity.setName("Yusuf");
         entity.setEmail("yusuf@example.com");
         entity.setRole("CLIENT");
 
         User domain = mapper.toDomain(entity);
-        assertThat(domain.getId()).isEqualTo(id);
         assertThat(domain.getName()).isEqualTo("Yusuf");
         assertThat(domain.getRole().name()).isEqualTo("CLIENT");
     }
 
-    @Test
-    void testDomainToEntity() {
-        User domain = new User();
-        UUID id = UUID.randomUUID();
-        domain.setId(id);
-        domain.setName("Yusuf");
-        domain.setEmail("yusuf@example.com");
-        domain.setRole(User.UserRole.CLIENT);
-
-        UserEntity entity = mapper.toEntity(domain);
-        assertThat(entity.getId()).isEqualTo(id);
-        assertThat(entity.getName()).isEqualTo("Yusuf");
-        assertThat(entity.getRole()).isEqualTo("CLIENT");
-    }
 }

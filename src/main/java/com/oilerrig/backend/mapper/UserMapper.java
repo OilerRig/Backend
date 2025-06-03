@@ -7,10 +7,6 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-
     @Mapping(source = "role", target = "role")
     User toDomain(UserEntity entity);
-
-    @Mapping(source = "role", target = "role")
-    UserEntity toEntity(User domain);
 }

@@ -7,10 +7,6 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
-
     @Mapping(source = "vendor", target = "vendor")
     Product toDomain(ProductEntity entity);
-
-    @Mapping(source = "vendor", target = "vendor")
-    ProductEntity toEntity(Product domain);
 }

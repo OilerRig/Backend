@@ -2,37 +2,19 @@ package com.oilerrig.backend.domain;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.UUID;
-
 
 
 public class Order {
-    private UUID id;
-    private UUID userId;
     private OffsetDateTime createdAt;
     private OrderStatus status;
+
+    private User user;
 
     public enum OrderStatus {
         IN_PROGRESS, COMPLETED, CANCELLED
     }
 
     private List<OrderItem> orderItems;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
 
     public OffsetDateTime getCreatedAt() {
         return createdAt;
@@ -50,7 +32,20 @@ public class Order {
         this.status = status;
     }
 
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
+    }
+
     public List<OrderItem> getOrderItems() {
         return orderItems;
     }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 }

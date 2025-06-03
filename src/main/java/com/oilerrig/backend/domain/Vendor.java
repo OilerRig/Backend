@@ -1,21 +1,9 @@
 package com.oilerrig.backend.domain;
 
-import java.util.List;
-
 public class Vendor {
     private int id;
     private String name;
     private String baseurl;
-
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
-
-    private List<Product> products;
 
     public int getId() {
         return id;

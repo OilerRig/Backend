@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -25,23 +26,12 @@ class OrderMapperTest {
     void testEntityToDomain() {
         OrderEntity entity = new OrderEntity();
         UUID id = UUID.randomUUID();
-        entity.setId(id);
+        entity.setCreatedAt(OffsetDateTime.MIN);
         entity.setStatus("COMPLETED");
 
         Order domain = mapper.toDomain(entity);
-        assertThat(domain.getId()).isEqualTo(id);
+        assertThat(domain.getCreatedAt()).isEqualTo(OffsetDateTime.MIN);
         assertThat(domain.getStatus().name()).isEqualTo("COMPLETED");
     }
 
-    @Test
-    void testDomainToEntity() {
-        Order domain = new Order();
-        UUID id = UUID.randomUUID();
-        domain.setId(id);
-        domain.setStatus(Order.OrderStatus.COMPLETED);
-
-        OrderEntity entity = mapper.toEntity(domain);
-        assertThat(entity.getId()).isEqualTo(id);
-        assertThat(entity.getStatus()).isEqualTo("COMPLETED");
-    }
 }
