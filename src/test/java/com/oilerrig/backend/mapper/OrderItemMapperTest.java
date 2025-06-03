@@ -3,7 +3,6 @@ package com.oilerrig.backend.mapper;
 import com.oilerrig.backend.data.entity.OrderItemEntity;
 import com.oilerrig.backend.data.entity.ProductEntity;
 import com.oilerrig.backend.domain.OrderItem;
-import com.oilerrig.backend.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

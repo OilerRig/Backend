@@ -30,8 +30,10 @@ public interface OrderMapper {
     }
 
     default List<OrderItemEntity> mapToOrderItems(List<Integer> productIds, List<Integer> quantities) {
-        if (productIds == null || quantities == null || productIds.size() != quantities.size()) {
-            throw new IllegalArgumentException("Product and quantity lists must be non-null and of equal size");
+        if(productIds == null || quantities == null ) return null; // null list for null inputs
+
+        if (productIds.size() != quantities.size()) {
+            throw new IllegalArgumentException("Product and quantity lists of equal size");
         }
 
         List<OrderItemEntity> items = new ArrayList<>();
