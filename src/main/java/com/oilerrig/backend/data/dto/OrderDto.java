@@ -9,7 +9,7 @@ import java.util.UUID;
 /**
  * DTO for {@link com.oilerrig.backend.data.entity.OrderEntity}
  */
-public class OrderEntityDto implements Serializable {
+public class OrderDto implements Serializable {
     private UUID id;
     private UUID userId;
     private String userRole;
@@ -17,10 +17,10 @@ public class OrderEntityDto implements Serializable {
     private String status;
     private List<OrderItemEntityDto> orderItems;
 
-    public OrderEntityDto() {
+    public OrderDto() {
     }
 
-    public OrderEntityDto(UUID id, UUID userId, String userRole, OffsetDateTime createdAt, String status, List<OrderItemEntityDto> orderItems) {
+    public OrderDto(UUID id, UUID userId, String userRole, OffsetDateTime createdAt, String status, List<OrderItemEntityDto> orderItems) {
         this.id = id;
         this.userId = userId;
         this.userRole = userRole;
@@ -33,7 +33,7 @@ public class OrderEntityDto implements Serializable {
         return id;
     }
 
-    public OrderEntityDto setId(UUID id) {
+    public OrderDto setId(UUID id) {
         this.id = id;
         return this;
     }
@@ -42,7 +42,7 @@ public class OrderEntityDto implements Serializable {
         return userId;
     }
 
-    public OrderEntityDto setUserId(UUID userId) {
+    public OrderDto setUserId(UUID userId) {
         this.userId = userId;
         return this;
     }
@@ -51,7 +51,7 @@ public class OrderEntityDto implements Serializable {
         return userRole;
     }
 
-    public OrderEntityDto setUserRole(String userRole) {
+    public OrderDto setUserRole(String userRole) {
         this.userRole = userRole;
         return this;
     }
@@ -60,7 +60,7 @@ public class OrderEntityDto implements Serializable {
         return createdAt;
     }
 
-    public OrderEntityDto setCreatedAt(OffsetDateTime createdAt) {
+    public OrderDto setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
         return this;
     }
@@ -69,7 +69,7 @@ public class OrderEntityDto implements Serializable {
         return status;
     }
 
-    public OrderEntityDto setStatus(String status) {
+    public OrderDto setStatus(String status) {
         this.status = status;
         return this;
     }
@@ -78,7 +78,7 @@ public class OrderEntityDto implements Serializable {
         return orderItems;
     }
 
-    public OrderEntityDto setOrderItems(List<OrderItemEntityDto> orderItems) {
+    public OrderDto setOrderItems(List<OrderItemEntityDto> orderItems) {
         this.orderItems = orderItems;
         return this;
     }
@@ -87,7 +87,7 @@ public class OrderEntityDto implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OrderEntityDto entity = (OrderEntityDto) o;
+        OrderDto entity = (OrderDto) o;
         return Objects.equals(this.id, entity.id) &&
                 Objects.equals(this.userId, entity.userId) &&
                 Objects.equals(this.userRole, entity.userRole) &&

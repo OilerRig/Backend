@@ -6,17 +6,17 @@ import java.util.Objects;
 /**
  * DTO for {@link com.oilerrig.backend.data.entity.ProductEntity}
  */
-public class ProductEntityDto implements Serializable {
+public class ProductDto implements Serializable {
     private Integer id;
     private String vendorName;
     private String name;
     private Double price;
     private Integer stock;
 
-    public ProductEntityDto() {
+    public ProductDto() {
     }
 
-    public ProductEntityDto(Integer id, String vendorName, String name, Double price, Integer stock) {
+    public ProductDto(Integer id, String vendorName, String name, Double price, Integer stock) {
         this.id = id;
         this.vendorName = vendorName;
         this.name = name;
@@ -28,7 +28,7 @@ public class ProductEntityDto implements Serializable {
         return id;
     }
 
-    public ProductEntityDto setId(Integer id) {
+    public ProductDto setId(Integer id) {
         this.id = id;
         return this;
     }
@@ -37,7 +37,7 @@ public class ProductEntityDto implements Serializable {
         return vendorName;
     }
 
-    public ProductEntityDto setVendorName(String vendorName) {
+    public ProductDto setVendorName(String vendorName) {
         this.vendorName = vendorName;
         return this;
     }
@@ -46,7 +46,7 @@ public class ProductEntityDto implements Serializable {
         return name;
     }
 
-    public ProductEntityDto setName(String name) {
+    public ProductDto setName(String name) {
         this.name = name;
         return this;
     }
@@ -55,7 +55,7 @@ public class ProductEntityDto implements Serializable {
         return price;
     }
 
-    public ProductEntityDto setPrice(Double price) {
+    public ProductDto setPrice(Double price) {
         this.price = price;
         return this;
     }
@@ -64,7 +64,7 @@ public class ProductEntityDto implements Serializable {
         return stock;
     }
 
-    public ProductEntityDto setStock(Integer stock) {
+    public ProductDto setStock(Integer stock) {
         this.stock = stock;
         return this;
     }
@@ -73,7 +73,7 @@ public class ProductEntityDto implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ProductEntityDto entity = (ProductEntityDto) o;
+        ProductDto entity = (ProductDto) o;
         return Objects.equals(this.id, entity.id) &&
                 Objects.equals(this.vendorName, entity.vendorName) &&
                 Objects.equals(this.name, entity.name) &&
