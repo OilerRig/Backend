@@ -1,12 +1,13 @@
 package com.oilerrig.backend.mapper;
 
-import com.oilerrig.backend.data.dto.OrderEntityDto;
+import com.oilerrig.backend.data.dto.OrderDto;
 import com.oilerrig.backend.data.dto.PlaceOrderRequestDto;
 import com.oilerrig.backend.data.entity.OrderEntity;
 import com.oilerrig.backend.data.entity.OrderItemEntity;
 import com.oilerrig.backend.data.entity.ProductEntity;
 import com.oilerrig.backend.data.entity.UserEntity;
 import com.oilerrig.backend.domain.Order;
+import com.oilerrig.backend.domain.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +35,12 @@ class OrderMapperTest {
     @Test
     void testEntityToDomain_basicFields() {
         OrderEntity entity = new OrderEntity();
-        entity.setStatus("COMPLETED");
+        entity.setStatus(Order.OrderStatus.COMPLETED);
         entity.setCreatedAt(OffsetDateTime.now());
 
         Order domain = mapper.toDomain(entity);
 
-        assertThat(domain.getStatus().name()).isEqualTo("COMPLETED");
+        assertThat(domain.getStatus()).isEqualTo(Order.OrderStatus.COMPLETED);
         assertThat(domain.getCreatedAt()).isEqualTo(entity.getCreatedAt());
     }
 
@@ -69,11 +70,11 @@ class OrderMapperTest {
         PlaceOrderRequestDto dto = new PlaceOrderRequestDto();
         // Intentionally empty dto to test nullValuePropertyMappingStrategy
         OrderEntity target = new OrderEntity();
-        target.setStatus("EXISTING");
+        target.setStatus(Order.OrderStatus.IN_PROGRESS);
 
         OrderEntity updated = mapper.partialUpdate(dto, target);
 
-        assertThat(updated.getStatus()).isEqualTo("EXISTING");
+        assertThat(updated.getStatus()).isEqualTo(Order.OrderStatus.IN_PROGRESS);
     }
 
     @Test
@@ -96,13 +97,13 @@ class OrderMapperTest {
         UserEntity user = new UserEntity();
         UUID userId = UUID.randomUUID();
         user.setId(userId);
-        user.setRole("ADMIN");
+        user.setRole(User.UserRole.ADMIN);
 
         entity.setUser(user);
 
-        OrderEntityDto dto = mapper.toDto(entity);
+        OrderDto dto = mapper.toDto(entity);
 
         assertThat(dto.getUserId()).isEqualTo(userId);
-        assertThat(dto.getUserRole()).isEqualTo("ADMIN");
+        assertThat(dto.getUserRole()).isEqualTo(User.UserRole.ADMIN.name());
     }
 }

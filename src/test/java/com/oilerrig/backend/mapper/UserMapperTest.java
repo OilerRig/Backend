@@ -23,11 +23,11 @@ class UserMapperTest {
         UserEntity entity = new UserEntity();
         entity.setName("Yusuf");
         entity.setEmail("yusuf@example.com");
-        entity.setRole("CLIENT");
+        entity.setRole(User.UserRole.CLIENT);
 
         User domain = mapper.toDomain(entity);
         assertThat(domain.getName()).isEqualTo("Yusuf");
-        assertThat(domain.getRole().name()).isEqualTo("CLIENT");
+        assertThat(domain.getRole()).isEqualTo(User.UserRole.CLIENT);
     }
 
 }

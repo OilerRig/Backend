@@ -95,6 +95,13 @@
 			<scope>runtime</scope>
 		</dependency>
 
+<!--	Hibernate Types for JSONB columns	-->
+		<dependency>
+			<groupId>com.vladmihalcea</groupId>
+			<artifactId>hibernate-types-60</artifactId>
+			<version>2.21.1</version>
+		</dependency>
+
 <!--	MAPSTRUCT FOR MAPPING GEN		-->
 		<dependency>
 			<groupId>org.mapstruct</groupId>
@@ -138,6 +145,8 @@
 							<version>1.6.3</version>
 						</path>
 					</annotationProcessorPaths>
+					<source>21</source>
+					<target>21</target>
 				</configuration>
 			</plugin>
 			<plugin>
