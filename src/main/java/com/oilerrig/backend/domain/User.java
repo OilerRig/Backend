@@ -12,6 +12,29 @@ public class User {
         GUEST, CLIENT, ADMIN
     }
 
+    // business logic and helpers
+    public boolean isGuest() {
+        return this.role == UserRole.GUEST;
+    }
+    public boolean isClient() {
+        return this.role == UserRole.CLIENT;
+    }
+    public boolean isAdmin() {
+        return this.role == UserRole.ADMIN;
+    }
+
+    public boolean hasEmail() {
+        return this.email != null;
+    }
+    public boolean hasName() {
+        return this.name != null;
+    }
+
+    public boolean isValid() {
+        return this.hasEmail() && this.hasName() && this.createdAt != null && this.role != null;
+    }
+
+    // getters and setters
     public String getEmail() {
         return email;
     }

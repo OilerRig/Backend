@@ -4,6 +4,14 @@ public class OrderItem {
     private Product product;
     private int quantity;
 
+    // business logic and helpers
+    public boolean isValid() {
+        return this.product != null
+                && this.quantity > 0
+                && this.product.isValid();
+    }
+
+    // getters and setters
     public Product getProduct() {
         return product;
     }

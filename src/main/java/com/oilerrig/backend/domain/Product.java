@@ -6,6 +6,19 @@ public class Product {
     private double price;
     private int stock;
 
+    // business logic and helpers
+    public boolean inStock() {
+        return stock > 0;
+    }
+
+    public boolean isValid() {
+        return this.vendor != null
+                && this.name != null
+                && this.price > 0
+                && this.vendor.isValid();
+    }
+
+    // getters and setters
     public Vendor getVendor() {
         return vendor;
     }

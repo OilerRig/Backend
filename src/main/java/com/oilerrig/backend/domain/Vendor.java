@@ -5,6 +5,12 @@ public class Vendor {
     private String name;
     private String baseurl;
 
+    // business logic and helpers
+    public boolean isValid() {
+        return id >= 0 && name != null && baseurl != null;
+    }
+
+    // getters and setters
     public int getId() {
         return id;
     }
