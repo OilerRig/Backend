@@ -1,5 +1,6 @@
 package com.oilerrig.backend.data.entity;
 
+import com.oilerrig.backend.domain.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -28,8 +29,9 @@ public class UserEntity {
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
 
-    @Column(name = "role", nullable = false, length = Integer.MAX_VALUE)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private User.UserRole role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderEntity> orders;
@@ -74,11 +76,11 @@ public class UserEntity {
         this.createdAt = createdAt;
     }
 
-    public String getRole() {
+    public User.UserRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(User.UserRole role) {
         this.role = role;
     }
 

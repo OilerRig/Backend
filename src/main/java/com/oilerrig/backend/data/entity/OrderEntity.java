@@ -1,5 +1,6 @@
 package com.oilerrig.backend.data.entity;
 
+import com.oilerrig.backend.domain.Order;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -22,9 +23,9 @@ public class OrderEntity {
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
 
-    @ColumnDefault("'pending'")
-    @Column(name = "status", nullable = false, length = 50)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private Order.OrderStatus status;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItemEntity> orderItems;
@@ -57,11 +58,11 @@ public class OrderEntity {
         this.createdAt = createdAt;
     }
 
-    public String getStatus() {
+    public Order.OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Order.OrderStatus status) {
         this.status = status;
     }
 
