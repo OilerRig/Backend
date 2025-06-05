@@ -1,7 +1,11 @@
 package com.oilerrig.backend.service;
 
 import com.oilerrig.backend.config.RabbitConfig;
+import com.oilerrig.backend.data.repository.OrderRepository;
+import com.oilerrig.backend.data.repository.UserRepository;
 import com.oilerrig.backend.data.saga.SagaMetadata;
+import com.oilerrig.backend.mapper.OrderMapper;
+import com.oilerrig.backend.mapper.UserMapper;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 

@@ -22,8 +22,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(r -> r.anyRequest().permitAll())
                 .oauth2ResourceServer(s -> s.jwt(jwt -> {}))
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-        ;
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
         return http.build();
     }
 

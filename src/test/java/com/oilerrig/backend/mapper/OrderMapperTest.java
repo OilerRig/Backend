@@ -70,11 +70,11 @@ class OrderMapperTest {
         PlaceOrderRequestDto dto = new PlaceOrderRequestDto();
         // Intentionally empty dto to test nullValuePropertyMappingStrategy
         OrderEntity target = new OrderEntity();
-        target.setStatus(Order.OrderStatus.IN_PROGRESS);
+        target.setStatus(Order.OrderStatus.PENDING);
 
         OrderEntity updated = mapper.partialUpdate(dto, target);
 
-        assertThat(updated.getStatus()).isEqualTo(Order.OrderStatus.IN_PROGRESS);
+        assertThat(updated.getStatus()).isEqualTo(Order.OrderStatus.PENDING);
     }
 
     @Test

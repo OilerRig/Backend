@@ -1,13 +1,9 @@
 package com.oilerrig.backend.data.saga;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 public class SagaMetadata {
     private List<SagaStep> steps;
-    private String currentStep;
-    private OffsetDateTime startedAt;
-    private OffsetDateTime expiresAt;
 
     public List<SagaStep> getSteps() {
         return steps;
@@ -17,75 +13,35 @@ public class SagaMetadata {
         this.steps = steps;
     }
 
-    public String getCurrentStep() {
-        return currentStep;
-    }
-
-    public void setCurrentStep(String currentStep) {
-        this.currentStep = currentStep;
-    }
-
-    public OffsetDateTime getStartedAt() {
-        return startedAt;
-    }
-
-    public void setStartedAt(OffsetDateTime startedAt) {
-        this.startedAt = startedAt;
-    }
-
-    public OffsetDateTime getExpiresAt() {
-        return expiresAt;
-    }
-
-    public void setExpiresAt(OffsetDateTime expiresAt) {
-        this.expiresAt = expiresAt;
-    }
-
     public static class SagaStep {
-        private String name;
-        private String status;
-        private int attempts;
-        private OffsetDateTime lastTriedAt;
-        private String error;
+        private int productId;
+        private int quantity;
+        private SagaStepStatus status;
 
-        public String getName() {
-            return name;
+        public enum SagaStepStatus { PENDING, COMPLETED, FAILED }
+
+        public int getProductId() {
+            return productId;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public void setProductId(int productId) {
+            this.productId = productId;
         }
 
-        public String getStatus() {
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(int quantity) {
+            this.quantity = quantity;
+        }
+
+        public SagaStepStatus getStatus() {
             return status;
         }
 
-        public void setStatus(String status) {
+        public void setStatus(SagaStepStatus status) {
             this.status = status;
-        }
-
-        public int getAttempts() {
-            return attempts;
-        }
-
-        public void setAttempts(int attempts) {
-            this.attempts = attempts;
-        }
-
-        public OffsetDateTime getLastTriedAt() {
-            return lastTriedAt;
-        }
-
-        public void setLastTriedAt(OffsetDateTime lastTriedAt) {
-            this.lastTriedAt = lastTriedAt;
-        }
-
-        public String getError() {
-            return error;
-        }
-
-        public void setError(String error) {
-            this.error = error;
         }
     }
 }

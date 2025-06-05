@@ -11,7 +11,7 @@ public class Order {
     private User user;
 
     public enum OrderStatus {
-        IN_PROGRESS, RETRYING, COMPLETED, CANCELLED
+        PENDING, RETRYING, COMPLETED, CANCELLED
     }
 
     private List<OrderItem> orderItems;
@@ -31,7 +31,7 @@ public class Order {
         if (prev == next) return false; // if no change, ignore
 
         return switch (prev) {
-            case IN_PROGRESS -> true; // in progress can go to any state
+            case PENDING -> true; // pending can go to any state
             case RETRYING -> next == OrderStatus.COMPLETED || next == OrderStatus.CANCELLED; // retrying can be completed or cancelled
             case COMPLETED, CANCELLED -> false; // cant change state if completed or cancelled
         };

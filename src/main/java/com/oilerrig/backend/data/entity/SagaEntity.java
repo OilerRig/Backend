@@ -33,16 +33,12 @@ public class SagaEntity {
     private int retryCount;
 
     @Column
-    private String lastFailedStep;
-
-    @Column
     @Type(JsonType.class)
     private SagaMetadata metadata;
 
     public enum SagaStatus {
         PENDING,
         COMPLETED,
-        FAILED,
         CANCELLING,
         CANCELLED
     }
@@ -98,15 +94,6 @@ public class SagaEntity {
 
     public SagaEntity setRetryCount(int retryCount) {
         this.retryCount = retryCount;
-        return this;
-    }
-
-    public String getLastFailedStep() {
-        return lastFailedStep;
-    }
-
-    public SagaEntity setLastFailedStep(String lastFailedStep) {
-        this.lastFailedStep = lastFailedStep;
         return this;
     }
 

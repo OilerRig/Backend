@@ -15,12 +15,12 @@ public class OrderDto implements Serializable {
     private String userRole;
     private OffsetDateTime createdAt;
     private String status;
-    private List<OrderItemEntityDto> orderItems;
+    private List<OrderItemDto> orderItems;
 
     public OrderDto() {
     }
 
-    public OrderDto(UUID id, UUID userId, String userRole, OffsetDateTime createdAt, String status, List<OrderItemEntityDto> orderItems) {
+    public OrderDto(UUID id, UUID userId, String userRole, OffsetDateTime createdAt, String status, List<OrderItemDto> orderItems) {
         this.id = id;
         this.userId = userId;
         this.userRole = userRole;
@@ -74,11 +74,11 @@ public class OrderDto implements Serializable {
         return this;
     }
 
-    public List<OrderItemEntityDto> getOrderItems() {
+    public List<OrderItemDto> getOrderItems() {
         return orderItems;
     }
 
-    public OrderDto setOrderItems(List<OrderItemEntityDto> orderItems) {
+    public OrderDto setOrderItems(List<OrderItemDto> orderItems) {
         this.orderItems = orderItems;
         return this;
     }
@@ -115,23 +115,23 @@ public class OrderDto implements Serializable {
     /**
      * DTO for {@link com.oilerrig.backend.data.entity.OrderItemEntity}
      */
-    public static class OrderItemEntityDto implements Serializable {
-        private ProductEntityDto product;
+    public static class OrderItemDto implements Serializable {
+        private ProductDto product;
         private Integer quantity;
 
-        public OrderItemEntityDto() {
+        public OrderItemDto() {
         }
 
-        public OrderItemEntityDto(ProductEntityDto product, Integer quantity) {
+        public OrderItemDto(ProductDto product, Integer quantity) {
             this.product = product;
             this.quantity = quantity;
         }
 
-        public ProductEntityDto getProduct() {
+        public ProductDto getProduct() {
             return product;
         }
 
-        public OrderItemEntityDto setProduct(ProductEntityDto product) {
+        public OrderItemDto setProduct(ProductDto product) {
             this.product = product;
             return this;
         }
@@ -140,7 +140,7 @@ public class OrderDto implements Serializable {
             return quantity;
         }
 
-        public OrderItemEntityDto setQuantity(Integer quantity) {
+        public OrderItemDto setQuantity(Integer quantity) {
             this.quantity = quantity;
             return this;
         }
@@ -149,7 +149,7 @@ public class OrderDto implements Serializable {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            OrderItemEntityDto entity = (OrderItemEntityDto) o;
+            OrderItemDto entity = (OrderItemDto) o;
             return Objects.equals(this.product, entity.product) &&
                     Objects.equals(this.quantity, entity.quantity);
         }

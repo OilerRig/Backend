@@ -1,6 +1,6 @@
 package com.oilerrig.backend.mapper;
 
-import com.oilerrig.backend.data.dto.OrderEntityDto;
+import com.oilerrig.backend.data.dto.OrderDto;
 import com.oilerrig.backend.data.dto.PlaceOrderRequestDto;
 import com.oilerrig.backend.data.entity.OrderEntity;
 import com.oilerrig.backend.data.entity.OrderItemEntity;
@@ -50,6 +50,6 @@ public interface OrderMapper {
 
     @Mapping(source = "user.role", target = "userRole")
     @Mapping(source = "user.id", target = "userId")
-    OrderEntityDto toDto(OrderEntity orderEntity);
+    OrderDto toDto(OrderEntity orderEntity);
 
 }
