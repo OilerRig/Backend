@@ -12,8 +12,8 @@ import java.util.UUID;
 @Table(name = "users", schema = "Broker")
 public class UserEntity {
     @Id
-    @ColumnDefault("gen_random_uuid()")
     @Column(name = "id", nullable = false)
+    @GeneratedValue
     private UUID id;
 
     @Column(name = "auth0_id", length = Integer.MAX_VALUE)

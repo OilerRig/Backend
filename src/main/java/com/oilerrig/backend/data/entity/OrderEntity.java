@@ -13,6 +13,7 @@ import java.util.UUID;
 public class OrderEntity {
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
