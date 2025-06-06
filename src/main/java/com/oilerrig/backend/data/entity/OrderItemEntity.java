@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class OrderItemEntity {
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

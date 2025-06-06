@@ -9,7 +9,7 @@ import java.util.List;
 public class VendorEntity {
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Integer id;
 
     @Column(name = "name", nullable = false, length = 100)

@@ -1,7 +1,6 @@
 package com.oilerrig.backend.seed;
 
 import com.github.javafaker.Faker;
-import com.oilerrig.backend.data.repository.SagaRepository;
 import com.oilerrig.backend.data.entity.*;
 import com.oilerrig.backend.data.repository.*;
 import com.oilerrig.backend.domain.Order;
@@ -15,7 +14,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
 @Component
 @Profile("!prod")
@@ -25,18 +23,18 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final VendorRepository vendorRepository;
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
-    private final SagaRepository sagaRepository;
+    private final OrderItemRepository orderItemRepository;
 
     public DatabaseSeeder(UserRepository userRepository,
                           VendorRepository vendorRepository,
                           ProductRepository productRepository,
                           OrderRepository orderRepository,
-                          SagaRepository sagaRepository) {
+                          OrderItemRepository orderItemRepository) {
         this.userRepository = userRepository;
         this.vendorRepository = vendorRepository;
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
-        this.sagaRepository = sagaRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
     @Override
@@ -49,13 +47,11 @@ public class DatabaseSeeder implements CommandLineRunner {
         productRepository.deleteAll();
         vendorRepository.deleteAll();
         userRepository.deleteAll();
-        sagaRepository.deleteAll();
 
         // Seed Users
         List<UserEntity> users = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             UserEntity user = new UserEntity();
-            user.setId(UUID.randomUUID());
             user.setAuth0Id(faker.regexify("[a-z0-9]{32}"));
             user.setEmail(faker.internet().emailAddress());
             user.setName(faker.name().fullName());
@@ -75,13 +71,13 @@ public class DatabaseSeeder implements CommandLineRunner {
         List<VendorEntity> vendors = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             VendorEntity vendor = new VendorEntity();
-            vendor.setId(i + 1); // Simple ID for vendors
             vendor.setName(faker.company().name());
             vendor.setBaseurl(faker.internet().url());
             vendors.add(vendor);
         }
         vendorRepository.saveAll(vendors);
 
+        vendors = vendorRepository.findAll(); // refresh list of vendors
         // Seed Products
         List<ProductEntity> products = new ArrayList<>();
         for (VendorEntity vendor : vendors) {
@@ -105,7 +101,6 @@ public class DatabaseSeeder implements CommandLineRunner {
             int numberOfOrders = faker.number().numberBetween(0, 10);
             for (int i = 0; i < numberOfOrders; i++) {
                 OrderEntity order = new OrderEntity();
-                order.setId(UUID.randomUUID());
                 order.setUser(user);
                 order.setCreatedAt(OffsetDateTime.now().minusDays(faker.number().numberBetween(1, 365)));
                 order.setStatus(faker.options().option(Order.OrderStatus.class));
@@ -124,10 +119,11 @@ public class DatabaseSeeder implements CommandLineRunner {
                     orderItem.setQuantity(faker.number().numberBetween(1, Math.min(5, randomProduct.getStock())));
                     orderItems.add(orderItem);
                 }
-                order.setOrderItems(orderItems);
             }
         }
         orderRepository.saveAll(orders);
+        orderItemRepository.saveAll(orderItems);
+
 
         // TODO SEED SOME SAGAS?
 

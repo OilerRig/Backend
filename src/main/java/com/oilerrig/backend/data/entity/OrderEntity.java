@@ -24,6 +24,9 @@ public class OrderEntity {
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
 
+    @Column(name = "resolved_at")
+    private OffsetDateTime resolvedAt;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Order.OrderStatus status;
