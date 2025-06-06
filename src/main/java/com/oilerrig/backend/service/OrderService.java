@@ -1,6 +1,7 @@
 package com.oilerrig.backend.service;
 
-import com.oilerrig.backend.config.RabbitConfig;
+import com.azure.spring.messaging.servicebus.core.ServiceBusTemplate;
+import com.oilerrig.backend.config.ServiceBusConfig;
 import com.oilerrig.backend.data.dto.OrderDto;
 import com.oilerrig.backend.data.dto.PlaceOrderRequestDto;
 import com.oilerrig.backend.data.entity.OrderEntity;
@@ -9,8 +10,8 @@ import com.oilerrig.backend.data.saga.Saga;
 import com.oilerrig.backend.data.saga.SagaStep;
 import com.oilerrig.backend.exception.NotFoundException;
 import com.oilerrig.backend.mapper.OrderMapper;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,15 +21,15 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    private final RabbitTemplate rabbitTemplate;
+    private final ServiceBusTemplate serviceBusTemplate;
     private final OrderMapper orderMapper;
     private final OrderRepository orderRepository;
 
     @Autowired
-    public OrderService(RabbitTemplate rabbitTemplate,
+    public OrderService(ServiceBusTemplate serviceBusTemplate,
                         OrderMapper orderMapper,
                         OrderRepository orderRepository) {
-        this.rabbitTemplate = rabbitTemplate;
+        this.serviceBusTemplate = serviceBusTemplate;
         this.orderMapper = orderMapper;
         this.orderRepository = orderRepository;
     }
@@ -47,11 +48,10 @@ public class OrderService {
         );
 
         // pass into mq
-        rabbitTemplate.convertAndSend(
-                RabbitConfig.ORDER_SAGA_EXCHANGE,
-                RabbitConfig.ORDER_SAGA_ROUTING_KEY,
-                saga
-        );
+        serviceBusTemplate.sendAsync(
+                ServiceBusConfig.SAGA_QUEUE,
+                MessageBuilder.withPayload(saga).build()
+        ).subscribe();
 
         // return entity to dto
         return orderMapper.toDto(entity);
