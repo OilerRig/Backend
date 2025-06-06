@@ -1,16 +1,19 @@
 package com.oilerrig.backend.controller;
 
-import com.oilerrig.backend.data.dto.OrderDto;
 import com.oilerrig.backend.data.dto.ProductDto;
 import com.oilerrig.backend.service.ProductService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
 @RestController
 class ProductController {
@@ -22,8 +25,29 @@ class ProductController {
     }
 
     @GetMapping(value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<List<ProductDto>> getAllProducts() {
-        return ResponseEntity.ok().body(productService.getAllProducts());
+    ResponseEntity<?> getProductPage(
+            Pageable pageable,
+            @RequestParam(value = "search") Optional<String> search
+    ) {
+        ResponseEntity<?> response;
+
+        if (!pageable.isPaged()) {
+            response = ResponseEntity.ok().body(
+                    productService.getAllProducts()
+            );
+        }
+        else if (search.isEmpty()) {
+            response = ResponseEntity.ok().body(
+                    productService.getProducts(pageable)
+            );
+        }
+        else {
+            response = ResponseEntity.ok().body(
+                    productService.getProducts(pageable, search.get())
+            );
+        }
+
+        return response;
     }
 
     @GetMapping(value = "/products/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,7 +57,7 @@ class ProductController {
 
     @GetMapping(value = "/products/{id}/details", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> getProductDetails(@PathVariable int id) {
-        return ResponseEntity.ok().body(productService.getProduct(id));
+        return ResponseEntity.ok().body(productService.getProductDetails(id));
     }
 
 }
