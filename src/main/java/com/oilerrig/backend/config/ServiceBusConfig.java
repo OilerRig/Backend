@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Configuration;
 @EnableAzureMessaging
 public class ServiceBusConfig {
 
-    public static final String SAGA_QUEUE = "queue.sagas.live";
-    public static final String WAIT_QUEUE = "queue.sagas.wait";
-    public static final String LOG_QUEUE = "queue.logging";
+    public static final String SAGA_QUEUE = "sagas.live";
+    public static final String WAIT_QUEUE = "sagas.wait";
+    public static final String LOG_QUEUE = "logging";
 
 }

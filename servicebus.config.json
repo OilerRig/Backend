@@ -5,7 +5,7 @@
         "Name": "sbemulatorns",
         "Queues": [
           {
-            "Name": "queue.logging",
+            "Name": "logging",
             "Properties": {
               "DeadLetteringOnMessageExpiration": false,
               "DefaultMessageTimeToLive": "PT1H",
@@ -19,10 +19,10 @@
             }
           },
           {
-            "Name": "queue.sagas.live",
+            "Name": "sagas.live",
             "Properties": {
               "DeadLetteringOnMessageExpiration": false,
-              "DefaultMessageTimeToLive": "PT15M",
+              "DefaultMessageTimeToLive": "PT16M",
               "DuplicateDetectionHistoryTimeWindow": "PT5S",
               "ForwardDeadLetteredMessagesTo": "",
               "ForwardTo": "",
@@ -33,12 +33,12 @@
             }
           },
           {
-            "Name": "queue.sagas.wait",
+            "Name": "sagas.wait",
             "Properties": {
               "DeadLetteringOnMessageExpiration": true,
               "DefaultMessageTimeToLive": "PT5M",
               "DuplicateDetectionHistoryTimeWindow": "PT5S",
-              "ForwardDeadLetteredMessagesTo": "queue.sagas.live",
+              "ForwardDeadLetteredMessagesTo": "",
               "ForwardTo": "",
               "LockDuration": "PT1M",
               "MaxDeliveryCount": 3,
