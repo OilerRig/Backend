@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Component
-@Profile("!prod")
+//@Profile("!prod") TODO FOR NOW SEED PROD
 public class DatabaseSeeder implements CommandLineRunner {
 
     private final UserRepository userRepository;
