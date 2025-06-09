@@ -1,7 +1,7 @@
 name: Test, Upload artifact and Deploy to Container
 on:
   workflow_dispatch:
-  push:
+#  push:
 
 jobs:
   test:
