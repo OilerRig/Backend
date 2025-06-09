@@ -7,15 +7,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/products")
 class ProductController {
 
     private final ProductService productService;
@@ -24,7 +22,7 @@ class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping(value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> getProductPage(
             Pageable pageable,
             @RequestParam(value = "search") Optional<String> search
@@ -50,12 +48,12 @@ class ProductController {
         return response;
     }
 
-    @GetMapping(value = "/products/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<ProductDto> getProduct(@PathVariable int id) {
         return ResponseEntity.ok().body(productService.getProduct(id));
     }
 
-    @GetMapping(value = "/products/{id}/details", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}/details", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> getProductDetails(@PathVariable int id) {
         return ResponseEntity.ok().body(productService.getProductDetails(id));
     }

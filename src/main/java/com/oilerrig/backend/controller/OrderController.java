@@ -15,6 +15,7 @@ import com.oilerrig.backend.data.dto.PlaceOrderRequestDto;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/orders")
 class OrderController {
 
     private final OrderService orderService;
@@ -24,12 +25,12 @@ class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping(value = "/orders", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<OrderDto> placeOrder(@RequestBody PlaceOrderRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.addOrder(dto));
     }
 
-    @GetMapping(value = "/orders/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<OrderDto> getOrder(@PathVariable UUID id) {
         return ResponseEntity.ok().body(orderService.getOrder(id));
     }
