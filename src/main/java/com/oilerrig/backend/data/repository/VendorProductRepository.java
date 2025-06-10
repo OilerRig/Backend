@@ -50,7 +50,7 @@ public class VendorProductRepository {
                 .stream()
                 .collect(Collectors.toMap(
                         v -> v,
-                        v -> new SpringVendorGateway(WebClient.builder(), v.getBaseurl())
+                        v -> new SpringVendorGateway(WebClient.builder(), v.getBaseurl(), v.getApikey())
                 )));
         ;
     }

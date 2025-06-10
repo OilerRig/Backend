@@ -17,10 +17,12 @@ public class SpringVendorGateway implements VendorGateway {
     private static final Logger log = LoggerFactory.getLogger(SpringVendorGateway.class);
 
     private final WebClient webClient;
+    private final String apiKey;
 
     public SpringVendorGateway(WebClient.Builder webClientBuilder,
-                               String baseUrl) {
+                               String baseUrl, String apiKey) {
         this.webClient = webClientBuilder.baseUrl(baseUrl).build();
+        this.apiKey = apiKey;
         log.info("SpringVendorGateway initialized with base URL: {}", baseUrl);
     }
 
@@ -30,6 +32,7 @@ public class SpringVendorGateway implements VendorGateway {
         try {
             VendorProductDto productResponse = webClient.get()
                     .uri("/products/{id}", vendorProductId)
+                    .header("X-API-KEY", apiKey)
                     .retrieve()
                     .bodyToMono(VendorProductDto.class)
                     .block(); // Blocking call
@@ -57,6 +60,7 @@ public class SpringVendorGateway implements VendorGateway {
         try {
             VendorProductWithDetailsDto productDetailResponse = webClient.get()
                     .uri("/products/{id}/details", vendorProductId)
+                    .header("X-API-KEY", apiKey)
                     .retrieve()
                     .bodyToMono(VendorProductWithDetailsDto.class)
                     .block(); // Blocking call
@@ -84,6 +88,7 @@ public class SpringVendorGateway implements VendorGateway {
         try {
             List<VendorProductDto> allProducts = webClient.get()
                     .uri("/products")
+                    .header("X-API-KEY", apiKey)
                     .retrieve()
                     .bodyToFlux(VendorProductDto.class) // Use bodyToFlux to expect a list of items
                     .collectList()                     // Collect all items into a List
@@ -112,6 +117,7 @@ public class SpringVendorGateway implements VendorGateway {
         try {
             VendorOrderDto orderResponse = webClient.post()
                     .uri("/orders")
+                    .header("X-API-KEY", apiKey)
                     .bodyValue(command)
                     .retrieve()
                     .bodyToMono(VendorOrderDto.class)
@@ -135,9 +141,9 @@ public class SpringVendorGateway implements VendorGateway {
     public VendorOrderDto cancelOrder(String vendorId, VendorCancelOrderDto command) throws VendorApiException {
         log.debug("Attempting to cancel order with ID: {} from SpringVendor (vendorId: {})", command.getOrderId(), vendorId);
         try {
-            VendorOrderDto cancelResponse = webClient.post()
+            VendorOrderDto cancelResponse = webClient.get()
                     .uri("/orders/{id}/cancel", command.getOrderId())
-                    .bodyValue(command)
+                    .header("X-API-KEY", apiKey)
                     .retrieve()
                     .bodyToMono(VendorOrderDto.class)
                     .block(); // Blocking call

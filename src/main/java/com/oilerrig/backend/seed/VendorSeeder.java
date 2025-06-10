@@ -61,7 +61,7 @@ public class VendorSeeder implements CommandLineRunner {
         VendorEntity vendor = new VendorEntity();
         vendor.setName("LOCAL SPRING VENDOR");
         vendor.setBaseurl("http://localhost:8081");
-        vendor.setApikey("no key yet");
+        vendor.setApikey("TESTKEY");
         vendors.add(vendor);
 
         vendorRepository.saveAll(vendors);
