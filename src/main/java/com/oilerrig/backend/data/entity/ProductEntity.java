@@ -2,6 +2,7 @@ package com.oilerrig.backend.data.entity;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.OffsetDateTime;
 
@@ -29,7 +30,7 @@ public class ProductEntity {
     @Column(name = "stock", nullable = false)
     private Integer stock;
 
-    @ColumnDefault("now()")
+    @UpdateTimestamp
     @Column(name = "last_updated", nullable = false)
     private OffsetDateTime lastUpdated;
 

@@ -6,9 +6,12 @@ import com.oilerrig.backend.data.repository.*;
 import com.oilerrig.backend.domain.Order;
 import com.oilerrig.backend.domain.User;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -16,8 +19,13 @@ import java.util.List;
 import java.util.Locale;
 
 @Component
-//@Profile("!prod") TODO FOR NOW SEED PROD
-public class DatabaseSeeder implements CommandLineRunner {
+@ConditionalOnProperty(
+        name = "app.seed.type",
+        havingValue = "mock",
+        matchIfMissing = false
+)
+public class MockDataSeeder implements CommandLineRunner {
+    private static final Logger log = LoggerFactory.getLogger(MockDataSeeder.class);
 
     private final UserRepository userRepository;
     private final VendorRepository vendorRepository;
@@ -25,7 +33,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
 
-    public DatabaseSeeder(UserRepository userRepository,
+    public MockDataSeeder(UserRepository userRepository,
                           VendorRepository vendorRepository,
                           ProductRepository productRepository,
                           OrderRepository orderRepository,
@@ -44,6 +52,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         // Clear existing data
         orderRepository.deleteAll();
+        orderItemRepository.deleteAll();
         productRepository.deleteAll();
         vendorRepository.deleteAll();
         userRepository.deleteAll();
@@ -127,6 +136,6 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         // TODO SEED SOME SAGAS?
 
-        System.out.println("Database seeded successfully with test data!");
+        log.info("Database seeded successfully with test data!");
     }
 }

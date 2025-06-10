@@ -4,6 +4,8 @@ public class Vendor {
     private int id;
     private String name;
     private String baseurl;
+    private String apikey;
+
 
     // business logic and helpers
     public boolean isValid() {
@@ -33,5 +35,13 @@ public class Vendor {
 
     public void setBaseurl(String baseurl) {
         this.baseurl = baseurl;
+    }
+
+    public String getApikey() {
+        return apikey;
+    }
+
+    public void setApikey(String apikey) {
+        this.apikey = apikey;
     }
 }

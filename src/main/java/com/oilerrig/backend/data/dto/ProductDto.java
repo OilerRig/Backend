@@ -1,6 +1,7 @@
 package com.oilerrig.backend.data.dto;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -12,6 +13,7 @@ public class ProductDto implements Serializable {
     private String name;
     private Double price;
     private Integer stock;
+    private Map<String, String> details;
 
     public ProductDto() {
     }
@@ -22,6 +24,15 @@ public class ProductDto implements Serializable {
         this.name = name;
         this.price = price;
         this.stock = stock;
+    }
+
+    public ProductDto(Integer id, String vendorName, String name, Double price, Integer stock, Map<String, String> details) {
+        this.id = id;
+        this.vendorName = vendorName;
+        this.name = name;
+        this.price = price;
+        this.stock = stock;
+        this.details = details;
     }
 
     public Integer getId() {
@@ -66,6 +77,15 @@ public class ProductDto implements Serializable {
 
     public ProductDto setStock(Integer stock) {
         this.stock = stock;
+        return this;
+    }
+
+    public Map<String, String> getDetails() {
+        return details;
+    }
+
+    public ProductDto setDetails(Map<String, String> details) {
+        this.details = details;
         return this;
     }
 

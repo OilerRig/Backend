@@ -1,11 +1,9 @@
 package com.oilerrig.backend.controller;
 
 import com.oilerrig.backend.data.dto.OrderDto;
-import com.oilerrig.backend.data.entity.OrderEntity;
 import com.oilerrig.backend.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

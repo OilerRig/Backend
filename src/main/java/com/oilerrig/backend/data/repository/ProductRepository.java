@@ -1,10 +1,13 @@
 package com.oilerrig.backend.data.repository;
 
 import com.oilerrig.backend.data.entity.ProductEntity;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<ProductEntity, Integer> {
@@ -12,4 +15,13 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Integer>
     Page<ProductEntity> findAllByNameContaining(String name, Pageable pageable);
 
     List<ProductEntity> findAllByNameContaining(String name);
+
+    public default boolean isStale(ProductEntity productEntity) {
+        return Duration.between(productEntity.getLastUpdated(), OffsetDateTime.now()).abs().toMinutes() > 5;
+    }
+
+    @Transactional
+    public default void removeStaleProducts() {
+        findAll().stream().filter(this::isStale).forEach(this::delete);
+    }
 }
