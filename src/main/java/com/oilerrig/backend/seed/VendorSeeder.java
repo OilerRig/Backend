@@ -1,6 +1,5 @@
 package com.oilerrig.backend.seed;
 
-import com.github.javafaker.Faker;
 import com.oilerrig.backend.data.entity.*;
 import com.oilerrig.backend.data.repository.*;
 import org.springframework.boot.CommandLineRunner;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @Component
 @ConditionalOnProperty(

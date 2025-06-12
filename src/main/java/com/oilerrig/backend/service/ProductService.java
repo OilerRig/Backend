@@ -59,7 +59,7 @@ public class ProductService {
                 );
 
         return vendorProductRepository
-                    .getProductDetails(product.getVendor().getId(), product.getId())
+                    .getProductDetails(product.getVendor().getId(), product.getProductId())
                     .orElseThrow(
                             () -> new NotFoundException("Product with id: " + productId + " not found at vendor")
                     );
