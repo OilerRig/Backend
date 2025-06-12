@@ -24,18 +24,15 @@ import java.util.Locale;
 public class VendorSeeder implements CommandLineRunner {
     private static final Logger log = LoggerFactory.getLogger(VendorSeeder.class);
 
-    private final UserRepository userRepository;
     private final VendorRepository vendorRepository;
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
 
-    public VendorSeeder(UserRepository userRepository,
-                          VendorRepository vendorRepository,
+    public VendorSeeder(VendorRepository vendorRepository,
                           ProductRepository productRepository,
                           OrderRepository orderRepository,
                           OrderItemRepository orderItemRepository) {
-        this.userRepository = userRepository;
         this.vendorRepository = vendorRepository;
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
@@ -51,8 +48,6 @@ public class VendorSeeder implements CommandLineRunner {
         orderItemRepository.deleteAll();
         productRepository.deleteAll();
         vendorRepository.deleteAll();
-        userRepository.deleteAll();
-
 
         // Seed Vendors
         List<VendorEntity> vendors = new ArrayList<>();

@@ -4,7 +4,6 @@ import com.github.javafaker.Faker;
 import com.oilerrig.backend.data.entity.*;
 import com.oilerrig.backend.data.repository.*;
 import com.oilerrig.backend.domain.Order;
-import com.oilerrig.backend.domain.User;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -27,18 +26,15 @@ import java.util.Locale;
 public class MockDataSeeder implements CommandLineRunner {
     private static final Logger log = LoggerFactory.getLogger(MockDataSeeder.class);
 
-    private final UserRepository userRepository;
     private final VendorRepository vendorRepository;
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
 
-    public MockDataSeeder(UserRepository userRepository,
-                          VendorRepository vendorRepository,
+    public MockDataSeeder(VendorRepository vendorRepository,
                           ProductRepository productRepository,
                           OrderRepository orderRepository,
                           OrderItemRepository orderItemRepository) {
-        this.userRepository = userRepository;
         this.vendorRepository = vendorRepository;
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
@@ -55,26 +51,6 @@ public class MockDataSeeder implements CommandLineRunner {
         orderItemRepository.deleteAll();
         productRepository.deleteAll();
         vendorRepository.deleteAll();
-        userRepository.deleteAll();
-
-        // Seed Users
-        List<UserEntity> users = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            UserEntity user = new UserEntity();
-            user.setAuth0Id(faker.regexify("[a-z0-9]{32}"));
-            user.setEmail(faker.internet().emailAddress());
-            user.setName(faker.name().fullName());
-            user.setCreatedAt(OffsetDateTime.now().minusDays(faker.number().numberBetween(1, 365)));
-            user.setRole(
-                    switch(i) {
-                        case 0 -> User.UserRole.ADMIN;
-                        case 1, 2 -> User.UserRole.GUEST;
-                        default -> User.UserRole.CLIENT;
-                    }
-            );
-            users.add(user);
-        }
-        userRepository.saveAll(users);
 
         // Seed Vendors
         List<VendorEntity> vendors = new ArrayList<>();
@@ -106,28 +82,27 @@ public class MockDataSeeder implements CommandLineRunner {
         // Seed Orders and OrderItems
         List<OrderEntity> orders = new ArrayList<>();
         List<OrderItemEntity> orderItems = new ArrayList<>();
-        for (UserEntity user : users) {
-            int numberOfOrders = faker.number().numberBetween(0, 10);
-            for (int i = 0; i < numberOfOrders; i++) {
-                OrderEntity order = new OrderEntity();
-                order.setUser(user);
-                order.setCreatedAt(OffsetDateTime.now().minusDays(faker.number().numberBetween(1, 365)));
-                order.setStatus(faker.options().option(Order.OrderStatus.class));
-                orders.add(order);
+        int numberOfOrders = faker.number().numberBetween(5, 15);
+        for (int i = 0; i < numberOfOrders; i++) {
+            OrderEntity order = new OrderEntity();
+            order.setAuth0_id(i%2 == 0 ? "testid" : null);
+            order.setGuest(i % 2 != 0);
+            order.setCreatedAt(OffsetDateTime.now().minusDays(faker.number().numberBetween(1, 365)));
+            order.setStatus(faker.options().option(Order.OrderStatus.class));
+            orders.add(order);
 
-                int numberOfItems = faker.number().numberBetween(1, 5);
-                for (int j = 0; j < numberOfItems; j++) {
-                    OrderItemEntity orderItem = new OrderItemEntity();
-                    orderItem.setOrder(order);
-                    // Ensure product exists and has stock
-                    ProductEntity randomProduct = products.get(faker.number().numberBetween(0, products.size() - 1));
-                    while(randomProduct.getStock() == 0){ // re-pick if out of stock
-                        randomProduct = products.get(faker.number().numberBetween(0, products.size() - 1));
-                    }
-                    orderItem.setProduct(randomProduct);
-                    orderItem.setQuantity(faker.number().numberBetween(1, Math.min(5, randomProduct.getStock())));
-                    orderItems.add(orderItem);
+            int numberOfItems = faker.number().numberBetween(1, 5);
+            for (int j = 0; j < numberOfItems; j++) {
+                OrderItemEntity orderItem = new OrderItemEntity();
+                orderItem.setOrder(order);
+                // Ensure product exists and has stock
+                ProductEntity randomProduct = products.get(faker.number().numberBetween(0, products.size() - 1));
+                while(randomProduct.getStock() == 0){ // re-pick if out of stock
+                    randomProduct = products.get(faker.number().numberBetween(0, products.size() - 1));
                 }
+                orderItem.setProduct(randomProduct);
+                orderItem.setQuantity(faker.number().numberBetween(1, Math.min(5, randomProduct.getStock())));
+                orderItems.add(orderItem);
             }
         }
         orderRepository.saveAll(orders);

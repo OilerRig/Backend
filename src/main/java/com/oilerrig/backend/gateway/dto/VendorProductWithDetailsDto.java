@@ -12,4 +12,11 @@ public class VendorProductWithDetailsDto extends VendorProductDto {
     public void setDetails(Map<String, String> details) {
         this.details = details;
     }
+
+    @Override
+    public String toString() {
+        return "VendorProductWithDetailsDto{" +
+                "details=" + details +
+                '}';
+    }
 }

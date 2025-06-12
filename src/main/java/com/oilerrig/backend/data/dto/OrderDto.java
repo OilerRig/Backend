@@ -11,20 +11,20 @@ import java.util.UUID;
  */
 public class OrderDto implements Serializable {
     private UUID id;
-    private UUID userId;
-    private String userRole;
+    private Boolean isGuest;
     private OffsetDateTime createdAt;
+    private OffsetDateTime resolvedAt;
     private String status;
     private List<OrderItemDto> orderItems;
 
     public OrderDto() {
     }
 
-    public OrderDto(UUID id, UUID userId, String userRole, OffsetDateTime createdAt, String status, List<OrderItemDto> orderItems) {
+    public OrderDto(UUID id, Boolean isGuest, OffsetDateTime createdAt, OffsetDateTime resolvedAt, String status, List<OrderItemDto> orderItems) {
         this.id = id;
-        this.userId = userId;
-        this.userRole = userRole;
+        this.isGuest = isGuest;
         this.createdAt = createdAt;
+        this.resolvedAt = resolvedAt;
         this.status = status;
         this.orderItems = orderItems;
     }
@@ -38,22 +38,12 @@ public class OrderDto implements Serializable {
         return this;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public Boolean getGuest() {
+        return isGuest;
     }
 
-    public OrderDto setUserId(UUID userId) {
-        this.userId = userId;
-        return this;
-    }
-
-    public String getUserRole() {
-        return userRole;
-    }
-
-    public OrderDto setUserRole(String userRole) {
-        this.userRole = userRole;
-        return this;
+    public void setGuest(Boolean guest) {
+        isGuest = guest;
     }
 
     public OffsetDateTime getCreatedAt() {
@@ -62,6 +52,15 @@ public class OrderDto implements Serializable {
 
     public OrderDto setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
+        return this;
+    }
+
+    public OffsetDateTime getResolvedAt() {
+        return resolvedAt;
+    }
+
+    public OrderDto setResolvedAt(OffsetDateTime resolvedAt) {
+        this.resolvedAt = resolvedAt;
         return this;
     }
 
@@ -89,24 +88,24 @@ public class OrderDto implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         OrderDto entity = (OrderDto) o;
         return Objects.equals(this.id, entity.id) &&
-                Objects.equals(this.userId, entity.userId) &&
-                Objects.equals(this.userRole, entity.userRole) &&
                 Objects.equals(this.createdAt, entity.createdAt) &&
+                Objects.equals(this.resolvedAt, entity.resolvedAt) &&
+                Objects.equals(this.isGuest, entity.isGuest) &&
                 Objects.equals(this.status, entity.status) &&
                 Objects.equals(this.orderItems, entity.orderItems);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, userRole, createdAt, status, orderItems);
+        return Objects.hash(id, isGuest, resolvedAt, createdAt, status, orderItems);
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(" +
                 "id = " + id + ", " +
-                "userId = " + userId + ", " +
-                "userRole = " + userRole + ", " +
+                "isGuest = " + isGuest + ", " +
+                "resolvedAt = " + resolvedAt + ", " +
                 "createdAt = " + createdAt + ", " +
                 "status = " + status + ", " +
                 "orderItems = " + orderItems + ")";

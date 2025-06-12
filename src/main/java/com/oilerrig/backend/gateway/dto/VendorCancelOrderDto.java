@@ -1,21 +1,23 @@
 package com.oilerrig.backend.gateway.dto;
 
+import java.util.UUID;
+
 public class VendorCancelOrderDto {
-    private String orderId; // The vendor's order ID to cancel
+    private UUID orderId; // The vendor's order ID to cancel
 
     // Constructors
     public VendorCancelOrderDto() {}
 
-    public VendorCancelOrderDto(String orderId) {
+    public VendorCancelOrderDto(UUID orderId) {
         this.orderId = orderId;
     }
 
     // Getter and Setter
-    public String getOrderId() {
+    public UUID getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(String orderId) {
+    public void setOrderId(UUID orderId) {
         this.orderId = orderId;
     }
 

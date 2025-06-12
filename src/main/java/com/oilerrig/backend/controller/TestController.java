@@ -18,7 +18,7 @@ public class TestController {
         this.testService = testService;
     }
 
-    @GetMapping("/")
+    @GetMapping({"", "/"})
     public String test() {
         return "Server is up and running.";
     }

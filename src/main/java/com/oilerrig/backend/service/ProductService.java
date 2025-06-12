@@ -58,13 +58,11 @@ public class ProductService {
                         () -> new NotFoundException("Product with id: " + productId + " not found in cache")
                 );
 
-        return productMapper
-                .toDto(vendorProductRepository
-                        .getProductDetails(product.getVendor().getId(), product.getId())
-                        .orElseThrow(
-                                () -> new NotFoundException("Product with id: " + productId + " not found at vendor")
-                        )
-                );
+        return vendorProductRepository
+                    .getProductDetails(product.getVendor().getId(), product.getId())
+                    .orElseThrow(
+                            () -> new NotFoundException("Product with id: " + productId + " not found at vendor")
+                    );
     }
 
     @Scheduled(initialDelay = 10, timeUnit = TimeUnit.SECONDS)
@@ -74,7 +72,6 @@ public class ProductService {
 
     @Scheduled(fixedRate = 5, initialDelay = 5, timeUnit = TimeUnit.MINUTES)
     public void updateCaches() {
-        System.out.println("HELP");
         vendorProductRepository.synchronizeStaleProducts();
     }
 

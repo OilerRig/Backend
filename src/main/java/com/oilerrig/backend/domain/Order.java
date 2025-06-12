@@ -1,14 +1,21 @@
 package com.oilerrig.backend.domain;
 
+import com.oilerrig.backend.data.entity.OrderItemEntity;
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 
 
 public class Order {
+    private UUID id;
+    private String auth0_id;
+    private Boolean isGuest;
     private OffsetDateTime createdAt;
+    private OffsetDateTime resolvedAt;
     private OrderStatus status;
-
-    private User user;
 
     public enum OrderStatus {
         PENDING, RETRYING, COMPLETED, CANCELLED
@@ -38,21 +45,64 @@ public class Order {
     }
 
     public boolean byGuest() {
-        return this.user.isGuest();
+        return this.isGuest;
     }
 
     public boolean isValid() {
-        return this.user != null
+        return  (this.isGuest == (this.auth0_id == null || this.auth0_id.isEmpty()))
                 && this.orderItems != null
                 && this.createdAt != null
+                && this.resolvedAt != null
                 && this.status != null
-                && this.user.isValid()
                 && this.orderItems.stream().allMatch(OrderItem::isValid);
 
     }
 
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", auth0_id='" + auth0_id + '\'' +
+                ", isGuest=" + isGuest +
+                ", createdAt=" + createdAt +
+                ", resolvedAt=" + resolvedAt +
+                ", status=" + status +
+                ", orderItems=" + orderItems +
+                '}';
+    }
 
     // getters and setters
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getAuth0_id() {
+        return auth0_id;
+    }
+
+    public void setAuth0_id(String auth0_id) {
+        this.auth0_id = auth0_id;
+    }
+
+    public Boolean getGuest() {
+        return isGuest;
+    }
+
+    public void setGuest(Boolean guest) {
+        isGuest = guest;
+    }
+
+    public OffsetDateTime getResolvedAt() {
+        return resolvedAt;
+    }
+
+    public void setResolvedAt(OffsetDateTime resolvedAt) {
+        this.resolvedAt = resolvedAt;
+    }
 
     public OffsetDateTime getCreatedAt() {
         return createdAt;
@@ -77,14 +127,6 @@ public class Order {
 
     public List<OrderItem> getOrderItems() {
         return orderItems;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
 }

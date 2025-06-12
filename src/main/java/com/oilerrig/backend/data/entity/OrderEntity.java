@@ -17,10 +17,11 @@ public class OrderEntity {
     @GeneratedValue
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    @Column(name = "auth0_id")
+    private String auth0_id;
 
+    @Column(name = "is_guest")
+    private Boolean isGuest;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
@@ -33,8 +34,21 @@ public class OrderEntity {
     @Column(name = "status", nullable = false)
     private Order.OrderStatus status;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<OrderItemEntity> orderItems;
+
+    @Override
+    public String toString() {
+        return "OrderEntity{" +
+                "id=" + id +
+                ", auth0_id='" + auth0_id + '\'' +
+                ", isGuest=" + isGuest +
+                ", createdAt=" + createdAt +
+                ", resolvedAt=" + resolvedAt +
+                ", status=" + status +
+                ", orderItems=" + orderItems +
+                '}';
+    }
 
     public UUID getId() {
         return id;
@@ -44,12 +58,28 @@ public class OrderEntity {
         this.id = id;
     }
 
-    public UserEntity getUser() {
-        return user;
+    public String getAuth0_id() {
+        return auth0_id;
     }
 
-    public void setUser(UserEntity user) {
-        this.user = user;
+    public void setAuth0_id(String auth0_id) {
+        this.auth0_id = auth0_id;
+    }
+
+    public Boolean getGuest() {
+        return isGuest;
+    }
+
+    public void setGuest(Boolean guest) {
+        isGuest = guest;
+    }
+
+    public OffsetDateTime getResolvedAt() {
+        return resolvedAt;
+    }
+
+    public void setResolvedAt(OffsetDateTime resolvedAt) {
+        this.resolvedAt = resolvedAt;
     }
 
     public void setOrderItems(List<OrderItemEntity> orderItems) {

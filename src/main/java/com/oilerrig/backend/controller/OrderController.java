@@ -23,7 +23,7 @@ class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<OrderDto> placeOrder(@RequestBody PlaceOrderRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.addOrder(dto));
     }

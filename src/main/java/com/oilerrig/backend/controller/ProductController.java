@@ -22,7 +22,7 @@ class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping(value = {"/", ""}, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> getProductPage(
             Pageable pageable,
             @RequestParam(value = "search") Optional<String> search

@@ -7,4 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring", uses = ProductMapper.class)
 public interface OrderItemMapper {
     OrderItem toDomain(OrderItemEntity entity);
+    OrderItemEntity toEntity(OrderItem domain);
 }

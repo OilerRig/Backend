@@ -1,7 +1,9 @@
 package com.oilerrig.backend.gateway.dto;
 
+import java.util.UUID;
+
 public class VendorOrderDto {
-    private String orderId;
+    private UUID id;
     private String productId; // The product that was ordered
     private Integer quantity;
     private String status; // E.g., "PENDING", "COMPLETED"
@@ -9,20 +11,20 @@ public class VendorOrderDto {
     // Constructors
     public VendorOrderDto() {}
 
-    public VendorOrderDto(String orderId, String productId, Integer quantity, String status) {
-        this.orderId = orderId;
+    public VendorOrderDto(UUID orderId, String productId, Integer quantity, String status) {
+        this.id = orderId;
         this.productId = productId;
         this.quantity = quantity;
         this.status = status;
     }
 
     // Getters and Setters
-    public String getOrderId() {
-        return orderId;
+    public UUID getId() {
+        return id;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public void setId(UUID orderId) {
+        this.id = orderId;
     }
 
     public String getProductId() {
@@ -52,7 +54,7 @@ public class VendorOrderDto {
     @Override
     public String toString() {
         return "VendorOrderDto{" +
-                "orderId='" + orderId + '\'' +
+                "orderId='" + id + '\'' +
                 ", productId='" + productId + '\'' +
                 ", quantity=" + quantity +
                 ", status='" + status + '\'' +

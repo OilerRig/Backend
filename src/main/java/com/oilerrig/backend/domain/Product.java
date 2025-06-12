@@ -1,7 +1,9 @@
 package com.oilerrig.backend.domain;
 
 public class Product {
+    private int id;
     private Vendor vendor;
+    private int vendorProductId;
     private String name;
     private double price;
     private int stock;
@@ -15,6 +17,8 @@ public class Product {
         return this.vendor != null
                 && this.name != null
                 && this.price > 0
+                && this.id >= 0
+                && this.vendorProductId >= 0
                 && this.vendor.isValid();
     }
 
@@ -51,4 +55,19 @@ public class Product {
         this.stock = stock;
     }
 
+    public int getVendorProductId() {
+        return vendorProductId;
+    }
+
+    public void setVendorProductId(int vendorProductId) {
+        this.vendorProductId = vendorProductId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

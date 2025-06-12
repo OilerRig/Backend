@@ -1,21 +1,21 @@
 package com.oilerrig.backend.data.repository;
 
+import com.oilerrig.backend.data.dto.ProductDto;
 import com.oilerrig.backend.data.entity.ProductEntity;
 import com.oilerrig.backend.data.entity.VendorEntity;
 import com.oilerrig.backend.exception.NotFoundException;
 import com.oilerrig.backend.exception.VendorApiException;
 import com.oilerrig.backend.gateway.VendorGateway;
+import com.oilerrig.backend.gateway.VendorProductGateway;
 import com.oilerrig.backend.gateway.dto.VendorProductDto;
 import com.oilerrig.backend.gateway.dto.VendorProductWithDetailsDto;
 import com.oilerrig.backend.gateway.impl.SpringVendorGateway;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.time.Duration;
 import java.time.OffsetDateTime;
 
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class VendorProductRepository {
 
     private final ProductRepository productRepository;
     private final VendorRepository vendorRepository;
-    private final Map<VendorEntity, VendorGateway> vendorGateways;
+    private final Map<VendorEntity, VendorProductGateway> vendorGateways;
 
     @Autowired
     public VendorProductRepository(ProductRepository productRepository, VendorRepository vendorRepository) {
@@ -52,7 +52,6 @@ public class VendorProductRepository {
                         v -> v,
                         v -> new SpringVendorGateway(WebClient.builder(), v.getBaseurl(), v.getApikey())
                 )));
-        ;
     }
 
 
@@ -78,7 +77,7 @@ public class VendorProductRepository {
         );
     }
 
-    public Optional<ProductEntity> getProductDetails(int vendorId, int productId) throws VendorApiException {
+    public Optional<ProductDto> getProductDetails(int vendorId, int productId) throws VendorApiException {
         VendorEntity vendor = vendorGateways
                 .keySet()
                 .stream()
@@ -90,9 +89,7 @@ public class VendorProductRepository {
                 vendorGateways.get(vendor)
                         .getProductDetails(vendorId, productId);
 
-        return vendorProductDetails.map(p ->
-                mapToProductEntity(p, vendor)
-        );
+        return vendorProductDetails.map(this::mapToProductDto);
     }
 
 
@@ -118,10 +115,18 @@ public class VendorProductRepository {
             List<VendorProductDto> vendorProducts = entry.getValue().getAllProducts(entry.getKey().getId());
 
             for (VendorProductDto vendorProductDto : vendorProducts) {
-                Optional<ProductEntity> entity = productRepository.findById(vendorProductDto.getId());
-                if (entity.isEmpty() || productRepository.isStale(entity.get())) { // only synchronize if missing or stale
+                Optional<ProductEntity> entity = productRepository.findByVendor_IdAndProductId(entry.getKey().getId(), vendorProductDto.getId());
+                if (entity.isEmpty()) { // if empty create it
                     ProductEntity productEntity = mapToProductEntity(vendorProductDto, entry.getKey());
                     productEntity.setLastUpdated(OffsetDateTime.now());
+                    productRepository.save(productEntity);
+                }
+                else if (productRepository.isStale(entity.get())) { // if stale update it
+                    ProductEntity productEntity = entity.get();
+                    productEntity.setLastUpdated(OffsetDateTime.now());
+                    productEntity.setStock(vendorProductDto.getStock());
+                    productEntity.setPrice(vendorProductDto.getPrice());
+                    productEntity.setName(vendorProductDto.getName());
                     productRepository.save(productEntity);
                 }
             }
@@ -136,6 +141,16 @@ public class VendorProductRepository {
         product.setPrice(vendorDto.getPrice());
         product.setStock(vendorDto.getStock());
         product.setVendor(vendor);
+        return product;
+    }
+
+    private ProductDto mapToProductDto(VendorProductWithDetailsDto vendorDto) {
+        ProductDto product = new ProductDto();
+        product.setId(vendorDto.getId());
+        product.setName(vendorDto.getName());
+        product.setPrice(vendorDto.getPrice());
+        product.setStock(vendorDto.getStock());
+        product.setDetails(vendorDto.getDetails());
         return product;
     }
 }

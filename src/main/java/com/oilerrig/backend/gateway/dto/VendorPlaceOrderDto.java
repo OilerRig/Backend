@@ -1,23 +1,23 @@
 package com.oilerrig.backend.gateway.dto;
 
 public class VendorPlaceOrderDto {
-    private String productId;
+    private Integer productId;
     private Integer quantity;
 
     // Constructors
     public VendorPlaceOrderDto() {}
 
-    public VendorPlaceOrderDto(String productId, Integer quantity) {
+    public VendorPlaceOrderDto(Integer productId, Integer quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }
 
     // Getters and Setters
-    public String getProductId() {
+    public Integer getProductId() {
         return productId;
     }
 
-    public void setProductId(String productId) {
+    public void setProductId(Integer productId) {
         this.productId = productId;
     }
 
