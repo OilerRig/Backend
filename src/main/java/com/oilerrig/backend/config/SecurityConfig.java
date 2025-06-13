@@ -25,11 +25,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(r -> r
                         .requestMatchers("/test/**").permitAll()
                         .requestMatchers("/orders/**").permitAll()
-                        .requestMatchers("products/**").permitAll()
-                        .requestMatchers("docs/**").permitAll()
+                        .requestMatchers("/products/**").permitAll()
+                        .requestMatchers("/docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs").permitAll()
                         .requestMatchers("/users/**").authenticated()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                        .anyRequest().hasAuthority("ROLE_ADMIN")
                 )
                 .oauth2ResourceServer(s -> s.jwt(jwt -> {}))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
