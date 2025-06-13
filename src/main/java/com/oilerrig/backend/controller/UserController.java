@@ -5,6 +5,7 @@ import com.oilerrig.backend.exception.AuthenticationAccessException;
 import com.oilerrig.backend.service.OrderService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Objects;
 
-@RestController
+@RestController("/users")
 class UserController {
 
     private final OrderService orderService;
@@ -23,7 +24,8 @@ class UserController {
         this.orderService = orderService;
     }
 
-    @GetMapping(value = "/users/{id}/orders", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}/orders", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("#id == authentication.name")
     ResponseEntity<List<OrderDto>> getUserOrders(@PathVariable String id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {

@@ -36,13 +36,13 @@ public class TestController {
         return "Message pushed to servicebus";
     }
 
-    @GetMapping("/auth/credentials")
-    public ResponseEntity<String> testCreds() {
+    @GetMapping("/auth/roles")
+    public ResponseEntity<String> testRoles() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         var authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
 
-        return ResponseEntity.ok().body("Hello!<br/><br/>Authorities: " + authorities);
+        return ResponseEntity.ok().body("Hello!<br/><br/>Roles: " + authorities);
     }
 
     @GetMapping("/auth")

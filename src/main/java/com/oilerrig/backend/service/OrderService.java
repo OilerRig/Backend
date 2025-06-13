@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -49,6 +51,16 @@ public class OrderService {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.productRepository = productRepository;
+    }
+
+    @Transactional
+    public boolean canAccessOrder(UUID orderId, Authentication auth) {
+        OrderEntity order = orderRepository.findById(orderId).orElseThrow(() -> new NotFoundException("Requested Order Doesn't Exist"));
+        return
+                order.getGuest() // allow access to guest orders
+                || auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).anyMatch(a -> a.equals("ROLE_ADMIN")) // allow access to admins
+                || (auth.getName() != null && orderRepository.findByIdAndAuth0_id(orderId, auth.getName()).isPresent()) // order is owned by current user
+                ;
     }
 
     // add a given order to the database and to message queue
