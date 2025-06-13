@@ -17,14 +17,14 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Integer>
 
     List<ProductEntity> findAllByNameContaining(String name);
 
-    public default boolean isStale(ProductEntity productEntity) {
+    default boolean isStale(ProductEntity productEntity) {
         return Duration.between(productEntity.getLastUpdated(), OffsetDateTime.now()).abs().toMinutes() > 5;
     }
 
     @Transactional
-    public default void removeStaleProducts() {
+    default void removeStaleProducts() {
         findAll().stream().filter(this::isStale).forEach(this::delete);
     }
 
-    Optional<ProductEntity> findByVendor_IdAndProductId(Integer vendorId, Integer prodcutId);
+    Optional<ProductEntity> findByVendor_IdAndProductId(Integer vendorId, Integer productId);
 }
