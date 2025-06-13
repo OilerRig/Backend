@@ -35,7 +35,7 @@ class OrderController {
             orderDto = orderService.addOrder(dto);
         }
         else {
-            orderDto = orderService.addOrder(dto);
+            orderDto = orderService.addOrder(dto, authentication.getName());
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(orderDto);
@@ -44,16 +44,7 @@ class OrderController {
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("@orderService.canAccessOrder(#id, authentication)")
     ResponseEntity<OrderDto> getOrder(@PathVariable UUID id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        OrderDto orderDto;
-        if (authentication == null || !authentication.isAuthenticated()) {
-            orderDto = orderService.getOrder(id);
-        }
-        else {
-            orderDto = orderService.getOrder(id, authentication.getName());
-        }
-
+        OrderDto orderDto = orderService.getOrder(id);
         return ResponseEntity.ok().body(orderDto);
     }
 

@@ -63,6 +63,11 @@ public class OrderService {
                 ;
     }
 
+    @Transactional
+    public boolean canAccessUserOrders(String userId, Authentication auth) {
+        return Objects.equals(userId, auth.getName());
+    }
+
     // add a given order to the database and to message queue
     @Transactional
     public OrderDto addOrder(PlaceOrderRequestDto dto) {
@@ -119,20 +124,11 @@ public class OrderService {
 
     // get order via identifiers
     public OrderDto getOrder(UUID orderId) {
-        return this.getOrder(orderId, null);
-    }
-
-    public OrderDto getOrder(UUID orderId, String auth0_id) {
         Optional<OrderEntity> optional = orderRepository.findById(orderId);
 
         if (optional.isPresent()) {
             OrderEntity order = optional.get();
-            if (order.getGuest() || order.getAuth0_id().equals(auth0_id)) {
                 return orderMapper.toDto(order);
-            }
-            else{
-                throw new AuthenticationAccessException("Unauthorized to access order with id " + orderId);
-            }
         }
         else {
             throw new NotFoundException("Order with id " + orderId);
