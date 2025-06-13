@@ -36,10 +36,5 @@ class UserController {
         return ResponseEntity.ok().body(orderService.getAllOrdersByUser(id));
     }
 
-    @GetMapping(value = "/admin/orders", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<List<OrderDto>> getAllOrders() {
-        return ResponseEntity.ok().body(orderService.getAllOrders());
-    }
-
 
 }

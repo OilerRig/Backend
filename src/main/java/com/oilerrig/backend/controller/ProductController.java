@@ -57,17 +57,4 @@ class ProductController {
     ResponseEntity<ProductDto> getProductDetails(@PathVariable int id) {
         return ResponseEntity.ok().body(productService.getProductDetails(id));
     }
-
-    @GetMapping(value = "/caches/init")
-    ResponseEntity<String> initCaches() {
-        productService.updateVendors();
-        productService.initializeCaches();
-        return ResponseEntity.ok().body("Caches Initialized Successfully");
-    }
-
-    @GetMapping(value = "/caches/sync")
-    ResponseEntity<String> syncCaches() {
-        productService.updateCaches();
-        return ResponseEntity.ok().body("Caches Synchronized Successfully");
-    }
 }

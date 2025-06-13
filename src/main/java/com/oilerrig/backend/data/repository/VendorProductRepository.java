@@ -46,7 +46,6 @@ public class VendorProductRepository {
         this.orderRepository = orderRepository;
     }
 
-    @Scheduled(initialDelay = 10, timeUnit = TimeUnit.SECONDS)
     public void updateVendors() {
         vendorGateways.putAll(vendorRepository.findAll()
                 .stream()

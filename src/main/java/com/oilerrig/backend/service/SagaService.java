@@ -165,6 +165,7 @@ public class SagaService {
     private void updateBrokerOrderStatus(UUID orderId, Order.OrderStatus status) {
         brokerOrderRepository.findById(orderId).ifPresent(order -> {
             order.setStatus(status);
+            order.setResolvedAt(OffsetDateTime.now());
             brokerOrderRepository.save(order);
             log.info("Broker Order {}: Status updated to {}", orderId, status);
         });

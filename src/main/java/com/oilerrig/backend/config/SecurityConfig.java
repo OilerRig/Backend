@@ -21,13 +21,12 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(r -> r
-//                        .requestMatchers("/orders").permitAll()
-//                        .requestMatchers("/products").permitAll()
-//                        .requestMatchers("/products/**").permitAll()
-//                        .requestMatchers("/user/**").authenticated()
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")
-//                        .anyRequest().hasRole("ADMIN")
-                                .anyRequest().permitAll()
+                        .requestMatchers("/test/**").permitAll()
+                        .requestMatchers("/orders", "/orders/**").permitAll()
+                        .requestMatchers("/products", "products/**").permitAll()
+                        .requestMatchers("/user/**").authenticated()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().hasRole("ADMIN")
                 )
                 .oauth2ResourceServer(s -> s.jwt(jwt -> {}))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));

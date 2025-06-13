@@ -65,13 +65,13 @@ public class ProductService {
                     );
     }
 
-    @Scheduled(initialDelay = 10, timeUnit = TimeUnit.SECONDS)
-    public void initializeCaches() {
+    public void resetCaches() {
         vendorProductRepository.synchronizeAllProducts();
     }
 
-    @Scheduled(fixedRate = 5, initialDelay = 5, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedRate = 5*60, initialDelay = 10, timeUnit = TimeUnit.SECONDS)
     public void updateCaches() {
+        this.updateVendors();
         vendorProductRepository.synchronizeStaleProducts();
     }
 

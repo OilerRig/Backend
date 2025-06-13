@@ -16,10 +16,8 @@ import com.oilerrig.backend.domain.OrderItem;
 import com.oilerrig.backend.exception.AuthenticationAccessException;
 import com.oilerrig.backend.exception.NotFoundException;
 import com.oilerrig.backend.exception.OrderCreationException;
-import com.oilerrig.backend.mapper.OrderItemMapper;
 import com.oilerrig.backend.mapper.OrderMapper;
 import jakarta.transaction.Transactional;
-import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +26,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
