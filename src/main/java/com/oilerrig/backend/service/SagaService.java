@@ -49,7 +49,6 @@ public class SagaService {
     }
 
     @ServiceBusListener(destination = ServiceBusConfig.SAGA_QUEUE)
-    @Transactional
     public void handleSaga(byte[] sagabytes) {
         SagaInstance saga = SagaSerializationUtils.deserializeFromJsonBytes(sagabytes, SagaInstance.class);
 

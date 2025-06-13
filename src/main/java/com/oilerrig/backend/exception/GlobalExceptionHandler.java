@@ -10,6 +10,14 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(AuthenticationAccessException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessExcption(AuthenticationAccessException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                "status", "error",
+                "message", ex.getMessage()
+        ));
+    }
+
     @ExceptionHandler(OrderCreationException.class)
     public ResponseEntity<Map<String, Object>> handleOrderError(OrderCreationException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(

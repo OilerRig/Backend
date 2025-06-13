@@ -13,6 +13,7 @@ import com.oilerrig.backend.data.saga.SagaInstance;
 import com.oilerrig.backend.data.saga.SagaSerializationUtils;
 import com.oilerrig.backend.domain.Order;
 import com.oilerrig.backend.domain.OrderItem;
+import com.oilerrig.backend.exception.AuthenticationAccessException;
 import com.oilerrig.backend.exception.NotFoundException;
 import com.oilerrig.backend.exception.OrderCreationException;
 import com.oilerrig.backend.mapper.OrderItemMapper;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -55,6 +57,11 @@ public class OrderService {
     // add a given order to the database and to message queue
     @Transactional
     public OrderDto addOrder(PlaceOrderRequestDto dto) {
+        return this.addOrder(dto, null);
+    }
+
+    @Transactional
+    public OrderDto addOrder(PlaceOrderRequestDto dto, String auth0_id) {
         // create and persist order
         List<OrderItem> orderItems = orderMapper.placeOrderRequestToOrderItems(dto);
         log.info("Order Recieved with {} items", orderItems.size());
@@ -62,7 +69,13 @@ public class OrderService {
         Order order = new Order();
         order.setCreatedAt(OffsetDateTime.now());
         order.setStatus(Order.OrderStatus.PENDING);
-        order.setGuest(true);
+        if (auth0_id == null) {
+            order.setGuest(true);
+        }
+        else {
+            order.setAuth0_id(auth0_id);
+            order.setGuest(false);
+        }
 
         OrderEntity entity = orderMapper.toEntity(order);
         log.info("Mapped Order to Entity {} -> {}", order, entity);
@@ -97,14 +110,32 @@ public class OrderService {
 
     // get order via identifiers
     public OrderDto getOrder(UUID orderId) {
+        return this.getOrder(orderId, null);
+    }
+
+    public OrderDto getOrder(UUID orderId, String auth0_id) {
         Optional<OrderEntity> optional = orderRepository.findById(orderId);
 
         if (optional.isPresent()) {
-            return orderMapper.toDto(optional.get());
+            OrderEntity order = optional.get();
+            if (order.getGuest() || order.getAuth0_id().equals(auth0_id)) {
+                return orderMapper.toDto(order);
+            }
+            else{
+                throw new AuthenticationAccessException("Unauthorized to access order with id " + orderId);
+            }
         }
         else {
             throw new NotFoundException("Order with id " + orderId);
         }
+    }
+
+    public List<OrderDto> getAllOrdersByUser(String userId) {
+        return orderRepository.findAllByAuth0_id(userId).stream().map(orderMapper::toDto).toList();
+    }
+
+    public List<OrderDto> getAllOrders() {
+        return orderRepository.findAll().stream().map(orderMapper::toDto).toList();
     }
 
 }

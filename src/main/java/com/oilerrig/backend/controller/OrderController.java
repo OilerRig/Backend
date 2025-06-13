@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.oilerrig.backend.data.dto.PlaceOrderRequestDto;
@@ -25,12 +27,32 @@ class OrderController {
 
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<OrderDto> placeOrder(@RequestBody PlaceOrderRequestDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.addOrder(dto));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        OrderDto orderDto;
+        if (authentication == null || !authentication.isAuthenticated()) {
+            orderDto = orderService.addOrder(dto);
+        }
+        else {
+            orderDto = orderService.addOrder(dto);
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderDto);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<OrderDto> getOrder(@PathVariable UUID id) {
-        return ResponseEntity.ok().body(orderService.getOrder(id));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        OrderDto orderDto;
+        if (authentication == null || !authentication.isAuthenticated()) {
+            orderDto = orderService.getOrder(id);
+        }
+        else {
+            orderDto = orderService.getOrder(id, authentication.getName());
+        }
+
+        return ResponseEntity.ok().body(orderDto);
     }
 
 }
