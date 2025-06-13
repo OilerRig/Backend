@@ -44,6 +44,7 @@ public class AdminController {
 
     @DeleteMapping(value = "/orders")
     ResponseEntity<String> deleteAllOrders() {
+        orderService.deleteAllOrders();
         return ResponseEntity.ok().body("Successfully Deleted All Orders");
     }
 

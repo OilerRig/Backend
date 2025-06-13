@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -55,16 +57,15 @@ public class OrderService {
     @Transactional
     public boolean canAccessOrder(UUID orderId, Authentication auth) {
         OrderEntity order = orderRepository.findById(orderId).orElseThrow(() -> new NotFoundException("Requested Order Doesn't Exist"));
+
         return
                 order.getGuest() // allow access to guest orders
-                || auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).anyMatch(a -> a.equals("ROLE_ADMIN")) // allow access to admins
-                || (auth.getName() != null && orderRepository.findByIdAndAuth0_id(orderId, auth.getName()).isPresent()) // order is owned by current user
+                || auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).anyMatch(a -> a.equals("ROLE_ADMIN"))// allow access to admins
+                || (
+                        auth instanceof JwtAuthenticationToken
+                        && orderRepository.findByIdAndAuth0_id(orderId, ((JwtAuthenticationToken) auth).getToken().getSubject()).isPresent()
+                ) // order is owned by current user
                 ;
-    }
-
-    @Transactional
-    public boolean canAccessUserOrders(String userId, Authentication auth) {
-        return Objects.equals(userId, auth.getName());
     }
 
     // add a given order to the database and to message queue
