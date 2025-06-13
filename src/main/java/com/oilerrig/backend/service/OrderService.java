@@ -142,4 +142,8 @@ public class OrderService {
         return orderRepository.findAll().stream().map(orderMapper::toDto).toList();
     }
 
+    public void deleteAllOrders() {
+        orderRepository.deleteAll();
+    }
+
 }

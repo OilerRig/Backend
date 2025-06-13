@@ -96,7 +96,7 @@ public class VendorProductRepository {
     @Transactional
     public void synchronizeAllProducts() throws VendorApiException {
         orderRepository.deleteAll();
-        productRepository.deleteAll();
+        productRepository.deleteAllAndResetIdentity();
         log.info("Synchronizing all products for " + vendorGateways.size() + " vendors");
         for (var entry : vendorGateways.entrySet()) {
             List<VendorProductDto> vendorProducts = entry.getValue().getAllProducts(entry.getKey().getId());

@@ -41,7 +41,7 @@ public class SecurityConfig {
                         .anyRequest().hasRole("ADMIN")
                 )
                 .oauth2Login(Customizer.withDefaults())
-                .oauth2ResourceServer(s -> s.jwt(jwt -> jwt.jwtAuthenticationConverter(customJwtAuthenticationConverter())))
+                .oauth2ResourceServer(s -> s.jwt(Customizer.withDefaults()))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
         return http.build();
     }
@@ -61,46 +61,5 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
-
-    @Bean
-    public JwtAuthenticationConverter customJwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter scopeAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-
-        String rolesClaimName = "oilerrig/roles";
-
-        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-        converter.setJwtGrantedAuthoritiesConverter(jwt -> {
-            Collection<GrantedAuthority> authorities = scopeAuthoritiesConverter.convert(jwt);
-
-            Object rolesClaim = jwt.getClaim(rolesClaimName);
-
-            if (rolesClaim instanceof Collection<?>) {
-                Collection<String> jwtRoles = (Collection<String>) rolesClaim;
-                List<GrantedAuthority> customAuthorities = jwtRoles.stream()
-                        .map(role -> {
-                            String prefixedRole = role.startsWith("ROLE_") ? role : "ROLE_" + role;
-                            return new SimpleGrantedAuthority(prefixedRole);
-                        })
-                        .collect(Collectors.toList());
-                authorities.addAll(customAuthorities);
-            }
-            else if (rolesClaim instanceof Map) {
-                Map<String, Object> realmAccess = (Map<String, Object>) rolesClaim;
-                Object nestedRoles = realmAccess.get("roles");
-                if (nestedRoles instanceof Collection<?>) {
-                    Collection<String> jwtRoles = (Collection<String>) nestedRoles;
-                    List<GrantedAuthority> customAuthorities = jwtRoles.stream()
-                            .map(role -> {
-                                String prefixedRole = role.startsWith("ROLE_") ? role : "ROLE_" + role;
-                                return new SimpleGrantedAuthority(prefixedRole);
-                            })
-                            .collect(Collectors.toList());
-                    authorities.addAll(customAuthorities);
-                }
-            }
-            return authorities;
-        });
-        return converter;
     }
 }

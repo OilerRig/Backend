@@ -5,6 +5,7 @@ import com.oilerrig.backend.service.OrderService;
 import com.oilerrig.backend.service.ProductService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,13 +25,13 @@ public class AdminController {
     }
 
     @GetMapping(value = "/caches/vendors")
-    ResponseEntity<String> initVendors() {
+    ResponseEntity<String> updateVendors() {
         productService.updateVendors();
         return ResponseEntity.ok().body("Vendors Initialized Successfully");
     }
 
     @GetMapping(value = "/caches/reset")
-    ResponseEntity<String> initCaches() {
+    ResponseEntity<String> resetCaches() {
         productService.resetCaches();
         return ResponseEntity.ok().body("Caches Initialized Successfully");
     }
@@ -39,6 +40,11 @@ public class AdminController {
     ResponseEntity<String> syncCaches() {
         productService.updateCaches();
         return ResponseEntity.ok().body("Caches Synchronized Successfully");
+    }
+
+    @DeleteMapping(value = "/orders")
+    ResponseEntity<String> deleteAllOrders() {
+        return ResponseEntity.ok().body("Successfully Deleted All Orders");
     }
 
     @GetMapping(value = "/orders", produces = MediaType.APPLICATION_JSON_VALUE)
