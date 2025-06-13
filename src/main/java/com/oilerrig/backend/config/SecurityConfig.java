@@ -2,6 +2,7 @@ package com.oilerrig.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -32,7 +33,8 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().hasAuthority("ROLE_ADMIN")
                 )
-                .oauth2ResourceServer(s -> s.jwt(jwt -> {}))
+                .oauth2Login(Customizer.withDefaults())
+                .oauth2ResourceServer(s -> s.jwt(Customizer.withDefaults()))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
         return http.build();
     }

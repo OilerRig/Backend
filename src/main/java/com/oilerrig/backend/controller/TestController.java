@@ -37,17 +37,17 @@ public class TestController {
     }
 
     @GetMapping("/auth/roles")
-    public ResponseEntity<String> testRoles() {
+    public ResponseEntity<String> getAuthorities() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         var authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
 
-        return ResponseEntity.ok().body("Hello!<br/><br/>Roles: " + authorities);
+        return ResponseEntity.ok().body("Recieved Authorities: " + authorities);
     }
 
     @GetMapping("/auth")
-    public ResponseEntity<String> testAuth() {
+    public ResponseEntity<String> getAuthentication() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.ok().body("Hello!<br/><br/>JWT: " + authentication);
+        return ResponseEntity.ok().body("Recieved Authentication: " + authentication);
     }
 }
