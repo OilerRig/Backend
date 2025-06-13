@@ -2,6 +2,7 @@ package com.oilerrig.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -12,8 +13,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-@EnableWebSecurity
 @Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -22,9 +24,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(r -> r
                         .requestMatchers("/test/**").permitAll()
-                        .requestMatchers("/orders", "/orders/**").permitAll()
-                        .requestMatchers("/products", "products/**").permitAll()
-                        .requestMatchers("/user/**").authenticated()
+                        .requestMatchers("/orders/**").permitAll()
+                        .requestMatchers("products/**").permitAll()
+                        .requestMatchers("docs/**").permitAll()
+                        .requestMatchers("/users/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().hasRole("ADMIN")
                 )
