@@ -36,12 +36,14 @@ public class VendorProductRepository {
     private final ProductRepository productRepository;
     private final VendorRepository vendorRepository;
     private final Map<VendorEntity, VendorProductGateway> vendorGateways;
+    private final OrderRepository orderRepository;
 
     @Autowired
-    public VendorProductRepository(ProductRepository productRepository, VendorRepository vendorRepository) {
+    public VendorProductRepository(ProductRepository productRepository, VendorRepository vendorRepository, OrderRepository orderRepository) {
         this.productRepository = productRepository;
         this.vendorRepository = vendorRepository;
         this.vendorGateways = new HashMap<>();
+        this.orderRepository = orderRepository;
     }
 
     @Scheduled(initialDelay = 10, timeUnit = TimeUnit.SECONDS)
@@ -96,6 +98,8 @@ public class VendorProductRepository {
 
     @Transactional
     public void synchronizeAllProducts() throws VendorApiException {
+        orderRepository.deleteAll();
+        productRepository.deleteAll();
         log.info("Synchronizing all products for " + vendorGateways.size() + " vendors");
         for (var entry : vendorGateways.entrySet()) {
             List<VendorProductDto> vendorProducts = entry.getValue().getAllProducts(entry.getKey().getId());
