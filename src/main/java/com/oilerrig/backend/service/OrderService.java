@@ -13,7 +13,6 @@ import com.oilerrig.backend.data.saga.SagaInstance;
 import com.oilerrig.backend.data.saga.SagaSerializationUtils;
 import com.oilerrig.backend.domain.Order;
 import com.oilerrig.backend.domain.OrderItem;
-import com.oilerrig.backend.exception.AuthenticationAccessException;
 import com.oilerrig.backend.exception.NotFoundException;
 import com.oilerrig.backend.exception.OrderCreationException;
 import com.oilerrig.backend.mapper.OrderMapper;

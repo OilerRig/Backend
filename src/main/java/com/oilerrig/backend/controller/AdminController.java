@@ -6,11 +6,13 @@ import com.oilerrig.backend.service.ProductService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RestController("/admin")
+@RestController
+@RequestMapping("/admin")
 public class AdminController {
 
     private final ProductService productService;
