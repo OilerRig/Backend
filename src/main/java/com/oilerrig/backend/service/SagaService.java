@@ -1,6 +1,8 @@
 package com.oilerrig.backend.service;
 
+import com.azure.spring.messaging.servicebus.core.ServiceBusTemplate;
 import com.azure.spring.messaging.servicebus.implementation.core.annotation.ServiceBusListener;
+import com.azure.spring.messaging.servicebus.support.ServiceBusMessageHeaders;
 import com.oilerrig.backend.config.ServiceBusConfig;
 import com.oilerrig.backend.data.entity.OrderEntity;
 import com.oilerrig.backend.data.entity.OrderItemEntity;
@@ -21,12 +23,15 @@ import com.oilerrig.backend.gateway.dto.VendorPlaceOrderDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,14 +43,16 @@ public class SagaService {
     private final OrderRepository brokerOrderRepository;
     private final OrderItemRepository brokerOrderItemRepository;
     private final VendorOrderRepository vendorOrderRepository;
+    private final ServiceBusTemplate serviceBusTemplate;
 
     @Autowired
     public SagaService(OrderRepository brokerOrderRepository,
                        OrderItemRepository brokerOrderItemRepository,
-                       VendorOrderRepository vendorOrderRepository) {
+                       VendorOrderRepository vendorOrderRepository, ServiceBusTemplate serviceBusTemplate) {
         this.brokerOrderRepository = brokerOrderRepository;
         this.brokerOrderItemRepository = brokerOrderItemRepository;
         this.vendorOrderRepository = vendorOrderRepository;
+        this.serviceBusTemplate = serviceBusTemplate;
     }
 
     @ServiceBusListener(destination = ServiceBusConfig.SAGA_QUEUE)
@@ -127,16 +134,21 @@ public class SagaService {
                     saga.getSagaId(), currentSuccessfulVendorOrders.size());
             compensateSaga(currentSuccessfulVendorOrders);
 
-
-            // No explicit send here. Throwing an exception will cause ASB to redeliver.
-            // The message will go back to the queue (potentially with a delay defined on the ASB queue itself).
-            // Or, if ASB has a 'wait' queue, it will go there. The current implementation relies on ASB's
-            // native redelivery. If a custom 'wait queue' flow is truly intended, a separate process
-            // would move from main DLQ to a 'wait' queue and then back to main.
-            // For direct ASB redelivery, just throw an exception to trigger rollback and redelivery.
-            // TODO MAJOR STUFF HERE
             updateBrokerOrderStatus(saga.getBrokerOrderId(), Order.OrderStatus.RETRYING);
-            throw new SagaProcessingException("Saga processing failed, triggering redelivery for saga " + saga.getSagaId());
+
+            HashMap<String, Object> headerMap = new HashMap<>();
+            headerMap.put(ServiceBusMessageHeaders.SCHEDULED_ENQUEUE_TIME, OffsetDateTime.now().plusSeconds(10).toInstant().toEpochMilli());
+            MessageHeaders headers = new MessageHeaders(headerMap);
+
+            serviceBusTemplate.sendAsync(
+                    ServiceBusConfig.SAGA_QUEUE,
+                    MessageBuilder.createMessage(
+                            SagaSerializationUtils.serializeToJsonBytes(saga),
+                            headers
+                    )
+            ).subscribe();
+
+            log.info("Saga processing failed, triggering redelivery for saga {}", saga.getSagaId());
         }
     }
 

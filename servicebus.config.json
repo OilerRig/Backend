@@ -31,20 +31,6 @@
               "RequiresDuplicateDetection": false,
               "RequiresSession": false
             }
-          },
-          {
-            "Name": "sagas.wait",
-            "Properties": {
-              "DeadLetteringOnMessageExpiration": true,
-              "DefaultMessageTimeToLive": "PT5M",
-              "DuplicateDetectionHistoryTimeWindow": "PT5S",
-              "ForwardDeadLetteredMessagesTo": "",
-              "ForwardTo": "",
-              "LockDuration": "PT1M",
-              "MaxDeliveryCount": 3,
-              "RequiresDuplicateDetection": false,
-              "RequiresSession": false
-            }
           }
         ]
       }

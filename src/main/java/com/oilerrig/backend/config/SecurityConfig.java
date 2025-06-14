@@ -45,7 +45,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
-                "https://delightful-wave-00b3c0b03.6.azurestaticapps.net/"
+                "https://delightful-wave-00b3c0b03.6.azurestaticapps.net"
                 ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Requested-With"));
