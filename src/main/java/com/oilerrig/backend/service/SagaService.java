@@ -173,8 +173,7 @@ public class SagaService {
 
     private void updateBrokerOrderItemStatus(OrderEntity order, Integer productId, Integer vendorId, OrderItem.ItemStatus status, UUID vendorOrderId) {
         order.getOrderItems().stream()
-                .filter(item -> item.getProduct().getId().equals(productId)
-                        && item.getProduct().getVendor().getId().equals(vendorId)) // check both for sanity check hehe
+                .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst()
                 .ifPresent(item -> {
                     item.setStatus(status);
