@@ -8,6 +8,7 @@ import com.oilerrig.backend.gateway.dto.VendorCancelOrderDto;
 import com.oilerrig.backend.gateway.dto.VendorOrderDto;
 import com.oilerrig.backend.gateway.dto.VendorPlaceOrderDto;
 import com.oilerrig.backend.gateway.impl.SpringVendorGateway;
+import com.oilerrig.backend.service.VendorGatewayService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -20,6 +21,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -30,30 +32,18 @@ public class VendorOrderRepository {
     private static final Logger log = LoggerFactory.getLogger(VendorOrderRepository.class);
 
     private final OrderRepository orderRepository;
-    private final VendorRepository vendorRepository;
-    private final Map<VendorEntity, VendorOrderGateway> vendorGateways;
+    private final VendorGatewayService gatewayService;
 
     @Autowired
-    public VendorOrderRepository(OrderRepository orderRepository, VendorRepository vendorRepository) {
+    public VendorOrderRepository(OrderRepository orderRepository, VendorGatewayService gatewayService) {
         this.orderRepository = orderRepository;
-        this.vendorRepository = vendorRepository;
-        this.vendorGateways = new HashMap<>();
-    }
-
-    @Scheduled(initialDelay = 10, timeUnit = TimeUnit.SECONDS)
-    public void updateVendors() {
-        vendorGateways.putAll(vendorRepository.findAll()
-                .stream()
-                .collect(Collectors.toMap(
-                        v -> v,
-                        v -> new SpringVendorGateway(WebClient.builder(), v.getBaseurl(), v.getApikey())
-                )));
+        this.gatewayService = gatewayService;
     }
 
     public VendorOrderDto placeOrder(int vendorId, VendorPlaceOrderDto command) throws VendorApiException {
         log.debug("VendorOrderRepository: Attempting to place order for product {} with vendor {}", command.getProductId(), vendorId);
 
-         VendorOrderGateway gateway = vendorGateways
+         VendorOrderGateway gateway = gatewayService.getVendorGateways()
                  .entrySet()
                  .stream()
                  .filter(e -> e.getKey().getId() == vendorId).findFirst()
@@ -64,7 +54,7 @@ public class VendorOrderRepository {
 
     public VendorOrderDto cancelOrder(int vendorId, VendorCancelOrderDto command) throws VendorApiException {
         log.debug("VendorOrderRepository: Attempting to cancel order {} with vendor {}", command.getOrderId(), vendorId);
-        VendorOrderGateway gateway = vendorGateways
+        VendorOrderGateway gateway = gatewayService.getVendorGateways()
                 .entrySet()
                 .stream()
                 .filter(e -> e.getKey().getId() == vendorId).findFirst()

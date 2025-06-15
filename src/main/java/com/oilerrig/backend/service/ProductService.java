@@ -22,12 +22,14 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
     private final VendorProductRepository vendorProductRepository;
+    private final VendorGatewayService vendorGatewayService;
 
     @Autowired
-    public ProductService(ProductRepository productRepository, ProductMapper productMapper, VendorProductRepository vendorProductRepository) {
+    public ProductService(ProductRepository productRepository, ProductMapper productMapper, VendorProductRepository vendorProductRepository, VendorGatewayService vendorGatewayService) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
         this.vendorProductRepository = vendorProductRepository;
+        this.vendorGatewayService = vendorGatewayService;
     }
 
     public ProductDto getProduct(int productId) {
@@ -76,7 +78,7 @@ public class ProductService {
     }
 
     public void updateVendors() {
-        vendorProductRepository.updateVendors();
+        vendorGatewayService.updateVendors();
     }
     
 }

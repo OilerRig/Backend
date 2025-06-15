@@ -5,26 +5,20 @@ import com.oilerrig.backend.data.entity.ProductEntity;
 import com.oilerrig.backend.data.entity.VendorEntity;
 import com.oilerrig.backend.exception.NotFoundException;
 import com.oilerrig.backend.exception.VendorApiException;
-import com.oilerrig.backend.gateway.VendorProductGateway;
 import com.oilerrig.backend.gateway.dto.VendorProductDto;
 import com.oilerrig.backend.gateway.dto.VendorProductWithDetailsDto;
-import com.oilerrig.backend.gateway.impl.SpringVendorGateway;
+import com.oilerrig.backend.service.VendorGatewayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.OffsetDateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Repository
 public class VendorProductRepository {
@@ -32,35 +26,14 @@ public class VendorProductRepository {
     private static final Logger log = LoggerFactory.getLogger(VendorProductRepository.class);
 
     private final ProductRepository productRepository;
-    private final VendorRepository vendorRepository;
-    private final Map<VendorEntity, VendorProductGateway> vendorGateways;
+    private final VendorGatewayService gatewayService;
     private final OrderRepository orderRepository;
 
     @Autowired
-    public VendorProductRepository(ProductRepository productRepository, VendorRepository vendorRepository, OrderRepository orderRepository) {
+    public VendorProductRepository(ProductRepository productRepository, VendorGatewayService gatewayService, OrderRepository orderRepository) {
         this.productRepository = productRepository;
-        this.vendorRepository = vendorRepository;
-        this.vendorGateways = new HashMap<>();
+        this.gatewayService = gatewayService;
         this.orderRepository = orderRepository;
-    }
-
-    public void updateVendors() {
-        List<VendorEntity> vendors = vendorRepository.findAll();
-
-        // add all new/missing vendors
-        vendors.stream()
-                .filter(v -> vendorGateways.keySet().stream().noneMatch(v::equals))
-                .forEach(v -> vendorGateways.putIfAbsent(
-                            v,
-                            new SpringVendorGateway(WebClient.builder(), v.getBaseurl(), v.getApikey())
-                        )
-                );
-
-        // remove all invalid/removed vendors
-        vendorGateways.keySet()
-                .stream()
-                .filter(v -> !vendors.contains(v))
-                .forEach(vendorGateways::remove);
     }
 
 
@@ -70,7 +43,7 @@ public class VendorProductRepository {
             return cachedProduct;
         }
 
-        VendorEntity vendor = vendorGateways
+        VendorEntity vendor = gatewayService.getVendorGateways()
                 .keySet()
                 .stream()
                 .filter(e -> e.getId() == vendorId)
@@ -78,7 +51,7 @@ public class VendorProductRepository {
                 .orElseThrow(() -> new NotFoundException("Vendor with id " + vendorId + " not found"));
 
         Optional<VendorProductDto> vendorProductDetails =
-                vendorGateways.get(vendor)
+                gatewayService.getVendorGateways().get(vendor)
                         .getProduct(vendorId, productId);
 
         return vendorProductDetails.map(p ->
@@ -87,7 +60,7 @@ public class VendorProductRepository {
     }
 
     public Optional<ProductDto> getProductDetails(int vendorId, int productId) throws VendorApiException {
-        VendorEntity vendor = vendorGateways
+        VendorEntity vendor = gatewayService.getVendorGateways()
                 .keySet()
                 .stream()
                 .filter(e -> e.getId() == vendorId)
@@ -95,7 +68,7 @@ public class VendorProductRepository {
                 .orElseThrow(() -> new NotFoundException("Vendor with id " + vendorId + " not found"));
 
         VendorProductWithDetailsDto vendorProductDetails =
-                vendorGateways.get(vendor)
+                gatewayService.getVendorGateways().get(vendor)
                         .getProductDetails(vendorId, productId)
                         .orElseThrow(() -> new NotFoundException("Product with id " + productId + " not found"));
 
@@ -104,15 +77,13 @@ public class VendorProductRepository {
         return Optional.of(mapToProductDto(vendorProductDetails));
     }
 
-
-
     @Transactional
     public void restartAndSyncProductCache() throws VendorApiException {
         orderRepository.deleteAll();
         productRepository.deleteAllAndCascade();
 
-        log.info("Resetting and Synchronizing all products for {} vendors", vendorGateways.size());
-        for (var entry : vendorGateways.entrySet()) {
+        log.info("Resetting and Synchronizing all products for {} vendors", gatewayService.getVendorGateways().size());
+        for (var entry : gatewayService.getVendorGateways().entrySet()) {
             List<VendorProductDto> vendorProducts = entry.getValue().getAllProducts(entry.getKey().getId());
 
             vendorProducts.stream()
@@ -125,7 +96,7 @@ public class VendorProductRepository {
     @Transactional
     public void synchronizeStaleProducts() throws VendorApiException {
         log.info("Synchronizing stale products");
-        for (var entry : vendorGateways.entrySet()) {
+        for (var entry : gatewayService.getVendorGateways().entrySet()) {
             List<VendorProductDto> vendorProducts = entry.getValue().getAllProducts(entry.getKey().getId());
 
             for (VendorProductDto vendorProductDto : vendorProducts) {
