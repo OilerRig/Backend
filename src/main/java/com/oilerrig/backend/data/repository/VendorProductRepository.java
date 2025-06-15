@@ -45,12 +45,22 @@ public class VendorProductRepository {
     }
 
     public void updateVendors() {
-        vendorGateways.putAll(vendorRepository.findAll()
+        List<VendorEntity> vendors = vendorRepository.findAll();
+
+        // add all new/missing vendors
+        vendors.stream()
+                .filter(v -> !vendorGateways.containsKey(v))
+                .forEach(v -> vendorGateways.putIfAbsent(
+                            v,
+                            new SpringVendorGateway(WebClient.builder(), v.getBaseurl(), v.getApikey())
+                        )
+                );
+
+        // remove all invalid/removed vendors
+        vendorGateways.keySet()
                 .stream()
-                .collect(Collectors.toMap(
-                        v -> v,
-                        v -> new SpringVendorGateway(WebClient.builder(), v.getBaseurl(), v.getApikey())
-                )));
+                .filter(v -> !vendors.contains(v))
+                .forEach(vendorGateways::remove);
     }
 
 

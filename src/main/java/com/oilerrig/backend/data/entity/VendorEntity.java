@@ -69,7 +69,7 @@ public class VendorEntity {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         VendorEntity vendor = (VendorEntity) o;
-        return Objects.equals(getId(), vendor.getId()) && Objects.equals(getName(), vendor.getName()) && Objects.equals(getBaseurl(), vendor.getBaseurl()) && Objects.equals(getApikey(), vendor.getApikey())  && Objects.equals(getProducts(), vendor.getProducts());
+        return Objects.equals(getId(), vendor.getId()) && Objects.equals(getName(), vendor.getName()) && Objects.equals(getBaseurl(), vendor.getBaseurl()) && Objects.equals(getApikey(), vendor.getApikey());
     }
 
     @Override

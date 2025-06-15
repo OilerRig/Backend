@@ -50,7 +50,6 @@ public class ProductService {
         );
     }
 
-    // TODO possibly cache this data?
     public ProductDto getProductDetails(int productId) {
         ProductEntity product = productRepository
                 .findById(productId)
