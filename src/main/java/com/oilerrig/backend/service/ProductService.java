@@ -65,7 +65,8 @@ public class ProductService {
     }
 
     public void resetCaches() {
-        vendorProductRepository.synchronizeAllProducts();
+        this.updateVendors();
+        vendorProductRepository.restartAndSyncProductCache();
     }
 
     @Scheduled(fixedRate = 5*60, initialDelay = 10, timeUnit = TimeUnit.SECONDS)

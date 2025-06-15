@@ -49,7 +49,7 @@ public class VendorProductRepository {
 
         // add all new/missing vendors
         vendors.stream()
-                .filter(v -> !vendorGateways.containsKey(v))
+                .filter(v -> vendorGateways.keySet().stream().noneMatch(v::equals))
                 .forEach(v -> vendorGateways.putIfAbsent(
                             v,
                             new SpringVendorGateway(WebClient.builder(), v.getBaseurl(), v.getApikey())
@@ -107,9 +107,11 @@ public class VendorProductRepository {
 
 
     @Transactional
-    public void synchronizeAllProducts() throws VendorApiException {
+    public void restartAndSyncProductCache() throws VendorApiException {
         orderRepository.deleteAll();
-        productRepository.deleteAllAndResetIdentity();
+        productRepository.deleteAllAndCascade();
+        productRepository.resetSequence(); // to make it nice and start from 1 again
+
         log.info("Resetting and Synchronizing all products for {} vendors", vendorGateways.size());
         for (var entry : vendorGateways.entrySet()) {
             List<VendorProductDto> vendorProducts = entry.getValue().getAllProducts(entry.getKey().getId());
