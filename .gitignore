@@ -8,7 +8,6 @@ target/
 ssl/oilerbackend.p12
 
 .env
-.env.*
 
 ### STS ###
 .apt_generated
