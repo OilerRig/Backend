@@ -66,7 +66,13 @@ public class SagaService {
             log.warn("Saga {} for Order {} expired {} minutes ago. Discarding and marking order as FAILED_EXPIRED.",
                     saga.getSagaId(), saga.getBrokerOrderId(), Duration.between(OffsetDateTime.now(), saga.getExpiresAt()).abs().toMinutes());
             updateBrokerOrderStatus(saga.getBrokerOrderId(), Order.OrderStatus.CANCELLED);
-            // ack and remove msg if this succeeds
+            // ack and remove msg if this succeeds, we can dead letter it for logging, but i think the table is enough
+
+            // Saga failed, now initiate compensation
+            log.warn("Saga {}: Saga failed. Initiating compensation for {} previously completed vendor orders.",
+                    saga.getSagaId(), saga.getCompletedVendorOrders().size());
+            compensateSaga(saga.getCompletedVendorOrders());
+
             return;
         }
 
@@ -74,16 +80,14 @@ public class SagaService {
                 .orElseThrow(() -> new NotFoundException("Broker order not found for saga: " + saga.getBrokerOrderId()));
 
         boolean allItemsProcessedSuccessfully = true;
-        // deep copy list to ensure we dont modify the original saga.getCompletedVendorOrders
-        List<SagaCompletedVendorOrder> currentSuccessfulVendorOrders = new ArrayList<>(saga.getCompletedVendorOrders());
 
         for (SagaOrderItem sagaItem : saga.getOrderItems()) {
             // check if alrdy processed for idempotency
             boolean itemAlreadyProcessed = saga.getCompletedVendorOrders().stream()
                     .anyMatch(cvo -> cvo.getVendorId() == sagaItem.getVendorId() &&
                             brokerOrderItemRepository.findByOrder_Id_AndProduct_Id(brokerOrder.getId(), sagaItem.getProductId())
-                                    .map(OrderItemEntity::getVendorOrderId)
-                                    .isPresent());
+                                    .map(i -> (i.getVendorOrderId() != null && i.getStatus() == OrderItem.ItemStatus.COMPLETED))
+                                    .orElse(false));
 
             if (itemAlreadyProcessed) {
                 log.debug("Saga {}: Order item for product {} with vendor {} already processed successfully in a previous attempt. Skipping.",
@@ -100,7 +104,6 @@ public class SagaService {
                         sagaItem.getVendorId(),
                         vendorOrderConfirmation.getId()
                 );
-                currentSuccessfulVendorOrders.add(completedOrder);
                 // update saga instance
                 saga.getCompletedVendorOrders().add(completedOrder);
 
@@ -129,11 +132,6 @@ public class SagaService {
             log.info("Saga {}: All items processed successfully. Marking broker order {} as COMPLETED.", saga.getSagaId(), saga.getBrokerOrderId());
             updateBrokerOrderStatus(saga.getBrokerOrderId(), Order.OrderStatus.COMPLETED);
         } else {
-            // Saga failed, now initiate compensation
-            log.warn("Saga {}: Saga failed. Initiating compensation for {} previously completed vendor orders.",
-                    saga.getSagaId(), currentSuccessfulVendorOrders.size());
-            compensateSaga(currentSuccessfulVendorOrders);
-
             updateBrokerOrderStatus(saga.getBrokerOrderId(), Order.OrderStatus.RETRYING);
 
             HashMap<String, Object> headerMap = new HashMap<>();
