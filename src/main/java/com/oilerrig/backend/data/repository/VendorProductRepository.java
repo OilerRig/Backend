@@ -110,8 +110,6 @@ public class VendorProductRepository {
     public void restartAndSyncProductCache() throws VendorApiException {
         orderRepository.deleteAll();
         productRepository.deleteAllAndCascade();
-        productRepository.resetSequence(); // to make it nice and start from 1 again
-        productRepository.flush();
 
         log.info("Resetting and Synchronizing all products for {} vendors", vendorGateways.size());
         for (var entry : vendorGateways.entrySet()) {

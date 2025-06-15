@@ -25,11 +25,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Integer>
     @NativeQuery("TRUNCATE broker.products CASCADE")
     void deleteAllAndCascade();
 
-    @Modifying
-    @Transactional
-    @NativeQuery(value = "ALTER SEQUENCE public.products_seq INCREMENT BY 1 MINVALUE 1")
-    void resetSequence();
-
     default boolean isStale(ProductEntity productEntity) {
         return Duration.between(productEntity.getLastUpdated(), OffsetDateTime.now()).abs().toMinutes() > 5;
     }
