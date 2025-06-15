@@ -84,11 +84,14 @@ public class VendorProductRepository {
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Vendor with id " + vendorId + " not found"));
 
-        Optional<VendorProductWithDetailsDto> vendorProductDetails =
+        VendorProductWithDetailsDto vendorProductDetails =
                 vendorGateways.get(vendor)
-                        .getProductDetails(vendorId, productId);
+                        .getProductDetails(vendorId, productId)
+                        .orElseThrow(() -> new NotFoundException("Product with id " + productId + " not found"));
 
-        return vendorProductDetails.map(this::mapToProductDto);
+        updateProductCache(vendor, vendorProductDetails, true);
+
+        return Optional.of(mapToProductDto(vendorProductDetails));
     }
 
 
@@ -97,7 +100,7 @@ public class VendorProductRepository {
     public void synchronizeAllProducts() throws VendorApiException {
         orderRepository.deleteAll();
         productRepository.deleteAllAndResetIdentity();
-        log.info("Synchronizing all products for " + vendorGateways.size() + " vendors");
+        log.info("Resetting and Synchronizing all products for {} vendors", vendorGateways.size());
         for (var entry : vendorGateways.entrySet()) {
             List<VendorProductDto> vendorProducts = entry.getValue().getAllProducts(entry.getKey().getId());
 
@@ -116,23 +119,30 @@ public class VendorProductRepository {
             List<VendorProductDto> vendorProducts = entry.getValue().getAllProducts(entry.getKey().getId());
 
             for (VendorProductDto vendorProductDto : vendorProducts) {
-                Optional<ProductEntity> entity = productRepository.findByVendor_IdAndProductId(entry.getKey().getId(), vendorProductDto.getId());
-                if (entity.isEmpty()) { // if empty create it
-                    ProductEntity productEntity = mapToProductEntity(vendorProductDto, entry.getKey());
-                    productEntity.setLastUpdated(OffsetDateTime.now());
-                    productRepository.save(productEntity);
-                }
-                else if (productRepository.isStale(entity.get())) { // if stale update it
-                    ProductEntity productEntity = entity.get();
-                    productEntity.setLastUpdated(OffsetDateTime.now());
-                    productEntity.setStock(vendorProductDto.getStock());
-                    productEntity.setPrice(vendorProductDto.getPrice());
-                    productEntity.setName(vendorProductDto.getName());
-                    productRepository.save(productEntity);
-                }
+                updateProductCache(entry.getKey(), vendorProductDto, false);
             }
         }
         productRepository.removeStaleProducts(); // to remove products that arent there anymore
+    }
+
+    private void updateProductCache(VendorEntity vendor, VendorProductDto dto, boolean force) {
+        int vendorId = vendor.getId();
+        int productId = dto.getId();
+
+        Optional<ProductEntity> entity = productRepository.findByVendor_IdAndProductId(vendorId, productId);
+        if (entity.isEmpty()) { // if empty create it
+            ProductEntity productEntity = mapToProductEntity(dto, vendor);
+            productEntity.setLastUpdated(OffsetDateTime.now());
+            productRepository.save(productEntity);
+        }
+        else if (force || productRepository.isStale(entity.get())) { // if stale update it, force overrides stale check
+            ProductEntity productEntity = entity.get();
+            productEntity.setLastUpdated(OffsetDateTime.now());
+            productEntity.setStock(dto.getStock());
+            productEntity.setPrice(dto.getPrice());
+            productEntity.setName(dto.getName());
+            productRepository.save(productEntity);
+        }
     }
 
     private ProductEntity mapToProductEntity(VendorProductDto vendorDto, VendorEntity vendor) {
