@@ -5,17 +5,15 @@ import com.azure.spring.messaging.servicebus.implementation.core.annotation.Serv
 import com.azure.spring.messaging.servicebus.support.ServiceBusMessageHeaders;
 import com.oilerrig.backend.config.ServiceBusConfig;
 import com.oilerrig.backend.data.entity.OrderEntity;
-import com.oilerrig.backend.data.entity.OrderItemEntity;
 import com.oilerrig.backend.data.repository.OrderItemRepository;
 import com.oilerrig.backend.data.repository.OrderRepository;
-import com.oilerrig.backend.data.repository.VendorOrderRepository; // New import
+import com.oilerrig.backend.data.repository.VendorOrderRepository;
 import com.oilerrig.backend.data.saga.SagaCompletedVendorOrder;
 import com.oilerrig.backend.data.saga.SagaInstance;
 import com.oilerrig.backend.data.saga.SagaOrderItem;
 import com.oilerrig.backend.data.saga.SagaSerializationUtils;
 import com.oilerrig.backend.domain.Order;
 import com.oilerrig.backend.domain.OrderItem;
-import com.oilerrig.backend.exception.NotFoundException;
 import com.oilerrig.backend.exception.VendorApiException;
 import com.oilerrig.backend.gateway.dto.VendorCancelOrderDto;
 import com.oilerrig.backend.gateway.dto.VendorOrderDto;
@@ -26,14 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class SagaService {
@@ -76,8 +70,13 @@ public class SagaService {
             return;
         }
 
-        OrderEntity brokerOrder = brokerOrderRepository.findById(saga.getBrokerOrderId())
-                .orElseThrow(() -> new NotFoundException("Broker order not found for saga: " + saga.getBrokerOrderId()));
+        Optional<OrderEntity> brokerOrderOptional = brokerOrderRepository.findById(saga.getBrokerOrderId());
+
+        if (brokerOrderOptional.isEmpty()) {
+            log.warn("Broker order not found for saga: {}. aborting...", saga.getBrokerOrderId());
+            return; // abandon processing this saga if order not found
+        }
+        OrderEntity brokerOrder = brokerOrderOptional.get();
 
         boolean allItemsProcessedSuccessfully = true;
 
@@ -194,11 +193,5 @@ public class SagaService {
                     log.info("Broker Order {} Item (Product: {}, Vendor: {}): Status updated to {}{}",
                             order.getId(), productId, vendorId, status, (vendorOrderId != null ? " (Vendor Order ID: " + vendorOrderId + ")" : ""));
                 });
-    }
-
-    private static class SagaProcessingException extends RuntimeException {
-        public SagaProcessingException(String message) {
-            super(message);
-        }
     }
 }
