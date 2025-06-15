@@ -111,6 +111,7 @@ public class VendorProductRepository {
         orderRepository.deleteAll();
         productRepository.deleteAllAndCascade();
         productRepository.resetSequence(); // to make it nice and start from 1 again
+        productRepository.flush();
 
         log.info("Resetting and Synchronizing all products for {} vendors", vendorGateways.size());
         for (var entry : vendorGateways.entrySet()) {
@@ -120,7 +121,6 @@ public class VendorProductRepository {
                     .map(p -> mapToProductEntity(p, entry.getKey()))
                     .peek(p -> p.setLastUpdated(OffsetDateTime.now()))
                     .forEach(productRepository::save);
-
         }
     }
 

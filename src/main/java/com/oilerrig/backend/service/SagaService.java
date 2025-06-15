@@ -112,15 +112,15 @@ public class SagaService {
 
             } catch (VendorApiException e) {
                 log.error("Saga {}: Failed to place order for product {} with vendor {}: {}",
-                        saga.getSagaId(), sagaItem.getProductId(), sagaItem.getVendorId(), e.getMessage());
+                        saga.getSagaId(), sagaItem.getVendorProductId(), sagaItem.getVendorId(), e.getMessage());
                 allItemsProcessedSuccessfully = false;
-                updateBrokerOrderItemStatus(brokerOrder, sagaItem.getProductId(), sagaItem.getVendorId(), OrderItem.ItemStatus.FAILED, null);
+                updateBrokerOrderItemStatus(brokerOrder, sagaItem.getVendorProductId(), sagaItem.getVendorId(), OrderItem.ItemStatus.FAILED, null);
                 break; // failure, compensate
             } catch (Exception e) {
                 log.error("Saga {}: Unexpected error during order placement for product {} with vendor {}: {}",
-                        saga.getSagaId(), sagaItem.getProductId(), sagaItem.getVendorId(), e.getMessage(), e);
+                        saga.getSagaId(), sagaItem.getVendorProductId(), sagaItem.getVendorId(), e.getMessage(), e);
                 allItemsProcessedSuccessfully = false;
-                updateBrokerOrderItemStatus(brokerOrder, sagaItem.getProductId(), sagaItem.getVendorId(), OrderItem.ItemStatus.FAILED, null);
+                updateBrokerOrderItemStatus(brokerOrder, sagaItem.getVendorProductId(), sagaItem.getVendorId(), OrderItem.ItemStatus.FAILED, null);
                 break; // failure, compensate
             }
         }
