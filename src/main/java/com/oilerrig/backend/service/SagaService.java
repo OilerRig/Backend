@@ -137,7 +137,7 @@ public class SagaService {
             updateBrokerOrderStatus(saga.getBrokerOrderId(), Order.OrderStatus.RETRYING);
 
             HashMap<String, Object> headerMap = new HashMap<>();
-            headerMap.put(ServiceBusMessageHeaders.SCHEDULED_ENQUEUE_TIME, OffsetDateTime.now().plusSeconds(10).toInstant().toEpochMilli());
+            headerMap.put(ServiceBusMessageHeaders.SCHEDULED_ENQUEUE_TIME, OffsetDateTime.now().plusSeconds(10));
             MessageHeaders headers = new MessageHeaders(headerMap);
 
             serviceBusTemplate.sendAsync(
