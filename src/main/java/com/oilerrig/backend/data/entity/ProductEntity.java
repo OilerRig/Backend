@@ -14,7 +14,7 @@ public class ProductEntity {
     @GeneratedValue
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "vendor_id", nullable = false)
     private VendorEntity vendor;
 
