@@ -59,11 +59,14 @@ public class ProductService {
                         () -> new NotFoundException("Product with id: " + productId + " not found in cache")
                 );
 
-        return vendorProductRepository
+        ProductDto dto = vendorProductRepository
                     .getProductDetails(product.getVendor().getId(), product.getProductId())
                     .orElseThrow(
                             () -> new NotFoundException("Product with id: " + productId + " not found at vendor")
                     );
+        dto.setId(productId);
+
+        return dto;
     }
 
     public void resetCaches() {
